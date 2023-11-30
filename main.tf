@@ -4,11 +4,17 @@ data "azurerm_resource_group" "parent" {
   name  = var.resource_group_name
 }
 
-resource "azurerm_TODO_the_resource_for_this_module" "this" {
+resource "azurerm_static_site" "this" {
   name                = var.name # calling code must supply the name
   resource_group_name = var.resource_group_name
   location            = coalesce(var.location, data.azurerm_resource_group.parent[0].location)
   // etc
+  # sku_tier = var.sku_tier
+  # sku_size = var.sku_size
+  # identity {
+  #   type = var.identity_type
+  #   identity_ids = var.identity_ids
+  # }
 }
 
 # required AVM resources interfaces
