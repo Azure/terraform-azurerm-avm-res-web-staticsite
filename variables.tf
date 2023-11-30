@@ -16,21 +16,87 @@ variable "resource_group_name" {
 
 variable "location" {
   type        = string
-  description = "Azure region where the resource should be deployed.  If null, the location will be inferred from the resource group location."
+  description = "Azure region where the resource should be deployed. If null, the location will be inferred from the resource group location."
   default     = null
 }
 
 variable "name" {
   type        = string
   description = "The name of the this resource."
+  default = null
+}
+
+variable "sku_size" {
+  type        = string
+  description = "The size of the SKU."
+  default     = "Free"
   validation {
-    condition     = can(regex("TODO determine REGEX", var.name))
-    error_message = "The name must be TODO."
-    # e.g.:
-    #condition     = can(regex("^[a-z0-9]{5,50}$", var.name))
-    #error_message = "The name must be between 5 and 50 characters long and can only contain lowercase letters and numbers."
+    condition     = contains(["Free", "Standard"], var.sku_size)
+    error_message = "The SKU size must be one of: 'Free', 'Standard'."
   }
 }
+
+variable "sku_tier" {
+  type        = string
+  description = "The tier of the SKU."
+  default     = "Free"
+  validation {
+    condition     = contains(["Free", "Standard"], var.sku_tier)
+    error_message = "The SKU tier must be one of: 'Free', 'Standard'."
+  }
+}
+
+variable "identities" {
+  type = map(object({
+    identity_type = optional(string, "SystemAssigned")
+    identity_ids = optional(set(string), [])
+  }))
+  default = {
+    
+  }
+  description = <<DESCRIPTION
+
+  ```terraform
+  identities = { 
+    system = {
+      identity_type = "SystemAssigned"
+      identity_ids = []
+    }
+  }
+  ```
+  DESCRIPTION
+
+  
+}
+
+variable "app_settings" {
+  type        = map(string)
+  default     = {
+
+  }
+  description = <<DESCRIPTION
+  A map of app settings to assign to the static site. 
+  
+  ```terraform
+  app_settings = {
+    WEBSITE_NODE_DEFAULT_VERSION = "10.14.1"
+    WEBSITE_TIME_ZONE            = "Pacific Standard Time"
+    WEB_CONCURRENCY              = "1"
+    WEBSITE_RUN_FROM_PACKAGE     = "1"
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE = "true"
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE_LOCKED = "false"
+    WEBSITE_NODE_DEFAULT_VERSION_LOCKED = "false"
+    WEBSITE_TIME_ZONE_LOCKED = "false"
+    WEB_CONCURRENCY_LOCKED = "false"
+    WEBSITE_RUN_FROM_PACKAGE_LOCKED = "false"
+  }
+  ```
+  DESCRIPTION
+}
+
+
+
+
 
 // required AVM interfaces 
 // remove only if not supported by the resource
@@ -102,6 +168,8 @@ variable "private_endpoints" {
       name               = string
       private_ip_address = string
     })), {})
+    inherit_lock = optional(bool, true)
+    inherit_tags = optional(bool, true)
   }))
   default     = {}
   description = <<DESCRIPTION
@@ -123,4 +191,22 @@ A map of private endpoints to create on this resource. The map key is deliberate
   - `name` - The name of the IP configuration.
   - `private_ip_address` - The private IP address of the IP configuration.
 DESCRIPTION
+}
+
+variable "tags" {
+  type = map(any)
+  default = {
+
+  }
+  description = <<DESCRIPTION
+  A map of tags that will be applied to the Load Balancer. 
+  
+  ```terraform
+  tags = {
+    key           = "value"
+    "another-key" = "another-value"
+    integers      = 123
+  }
+  ```
+  DESCRIPTION
 }

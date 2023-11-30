@@ -6,13 +6,13 @@ resource "azurerm_private_endpoint" "this" {
   resource_group_name           = each.value.resource_group_name != null ? each.value.resource_group_name : var.resource_group_name
   subnet_id                     = each.value.subnet_resource_id
   custom_network_interface_name = each.value.network_interface_name
-  tags                          = each.value.tags
+  tags                          = each.value.inherit_tags ? merge(each.value.tags, var.tags) : each.value.tags
 
   private_service_connection {
     name                           = each.value.private_service_connection_name != null ? each.value.private_service_connection_name : "pse-${var.name}"
-    private_connection_resource_id = azurerm_TODO.this.id
+    private_connection_resource_id = azurerm_static_site.this.id
     is_manual_connection           = false
-    subresource_names              = ["TODO subresource name, see https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-link-resource"]
+    subresource_names              = ["staticSites"]
   }
 
   dynamic "private_dns_zone_group" {
@@ -29,8 +29,8 @@ resource "azurerm_private_endpoint" "this" {
 
     content {
       name               = ip_configuration.value.name
-      subresource_name   = "TODO subresource name"
-      member_name        = "TODO subresource name"
+      subresource_name   = "staticSites"
+      member_name        = "staticSites"
       private_ip_address = ip_configuration.value.private_ip_address
     }
   }
