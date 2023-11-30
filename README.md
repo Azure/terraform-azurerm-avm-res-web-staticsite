@@ -1,29 +1,14 @@
 <!-- BEGIN_TF_DOCS -->
-# terraform-azurerm-avm-template
+# terraform-azurerm-avm-res-web-staticsite
 
-This is a template repo for Terraform Azure Verified Modules.
-
-Things to do:
-
-1. Set up a GitHub repo environment called `test`.
-1. Configure environment protection rule to ensure that approval is required before deploying to this environment.
-1. Create a user-assigned managed identity in your test subscription.
-1. Create a role assignment for the managed identity on your test subscription, use the minimum required role.
-1. Configure federated identity credentials on the user assigned managed identity. Use the GitHub environment.
-1. Create the following environment secrets on the `test` environment:
-   1. AZURE\_CLIENT\_ID
-   1. AZURE\_TENANT\_ID
-   1. AZURE\_SUBSCRIPTION\_ID
-1. Search and update TODOs within the code and remove the TODO comments once complete.
-
-Major version Zero (0.y.z) is for initial development. Anything MAY change at any time. A module SHOULD NOT be considered stable till at least it is major version one (1.0.0) or greater. Changes will always be via new versions being published and no changes will be made to existing published versions. For more details please go to <https://semver.org/>
+Module to deploy static web apps in Azure.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.3.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.5.2)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0)
 
@@ -41,25 +26,20 @@ The following providers are used by this module:
 
 The following resources are used by this module:
 
-- [azurerm_TODO_the_resource_for_this_module.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/TODO_the_resource_for_this_module) (resource)
+- [azurerm_management_lock.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
 - [azurerm_private_endpoint_application_security_group_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint_application_security_group_association) (resource)
 - [azurerm_resource_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) (resource)
+- [azurerm_role_assignment.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azurerm_static_site.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_site) (resource)
 - [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
-- [azurerm_resource_group.parent](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
 The following input variables are required:
-
-### <a name="input_name"></a> [name](#input\_name)
-
-Description: The name of the this resource.
-
-Type: `string`
 
 ### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
 
@@ -71,6 +51,29 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
+### <a name="input_app_settings"></a> [app\_settings](#input\_app\_settings)
+
+Description:   A map of app settings to assign to the static site.
+
+  ```terraform
+  app_settings = {
+    WEBSITE_NODE_DEFAULT_VERSION = "10.14.1"
+    WEBSITE_TIME_ZONE            = "Pacific Standard Time"
+    WEB_CONCURRENCY              = "1"
+    WEBSITE_RUN_FROM_PACKAGE     = "1"
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE = "true"
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE_LOCKED = "false"
+    WEBSITE_NODE_DEFAULT_VERSION_LOCKED = "false"
+    WEBSITE_TIME_ZONE_LOCKED = "false"
+    WEB_CONCURRENCY_LOCKED = "false"
+    WEBSITE_RUN_FROM_PACKAGE_LOCKED = "false"
+  }
+```
+
+Type: `map(string)`
+
+Default: `{}`
+
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
 Description: This variable controls whether or not telemetry is enabled for the module.  
@@ -81,9 +84,32 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_identities"></a> [identities](#input\_identities)
+
+Description:
+  ```terraform
+  identities = {
+    system = {
+      identity_type = "SystemAssigned"
+      identity_ids = []
+    }
+  }
+```
+
+Type:
+
+```hcl
+map(object({
+    identity_type = optional(string, "SystemAssigned")
+    identity_ids  = optional(set(string), [])
+  }))
+```
+
+Default: `{}`
+
 ### <a name="input_location"></a> [location](#input\_location)
 
-Description: Azure region where the resource should be deployed.  If null, the location will be inferred from the resource group location.
+Description: Azure region where the resource should be deployed. If null, the location will be inferred from the resource group location.
 
 Type: `string`
 
@@ -103,6 +129,14 @@ object({
 ```
 
 Default: `{}`
+
+### <a name="input_name"></a> [name](#input\_name)
+
+Description: The name of the this resource.
+
+Type: `string`
+
+Default: `null`
 
 ### <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints)
 
@@ -155,6 +189,8 @@ map(object({
       name               = string
       private_ip_address = string
     })), {})
+    inherit_lock = optional(bool, true)
+    inherit_tags = optional(bool, true)
   }))
 ```
 
@@ -186,6 +222,38 @@ map(object({
     delegated_managed_identity_resource_id = optional(string, null)
   }))
 ```
+
+Default: `{}`
+
+### <a name="input_sku_size"></a> [sku\_size](#input\_sku\_size)
+
+Description: The size of the SKU.
+
+Type: `string`
+
+Default: `"Free"`
+
+### <a name="input_sku_tier"></a> [sku\_tier](#input\_sku\_tier)
+
+Description: The tier of the SKU.
+
+Type: `string`
+
+Default: `"Free"`
+
+### <a name="input_tags"></a> [tags](#input\_tags)
+
+Description:   A map of tags that will be applied to the Load Balancer.
+
+  ```terraform
+  tags = {
+    key           = "value"
+    "another-key" = "another-value"
+    integers      = 123
+  }
+```
+
+Type: `map(any)`
 
 Default: `{}`
 

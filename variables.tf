@@ -23,7 +23,7 @@ variable "location" {
 variable "name" {
   type        = string
   description = "The name of the this resource."
-  default = null
+  default     = null
 }
 
 variable "sku_size" {
@@ -49,10 +49,10 @@ variable "sku_tier" {
 variable "identities" {
   type = map(object({
     identity_type = optional(string, "SystemAssigned")
-    identity_ids = optional(set(string), [])
+    identity_ids  = optional(set(string), [])
   }))
   default = {
-    
+
   }
   description = <<DESCRIPTION
 
@@ -66,12 +66,12 @@ variable "identities" {
   ```
   DESCRIPTION
 
-  
+
 }
 
 variable "app_settings" {
-  type        = map(string)
-  default     = {
+  type = map(string)
+  default = {
 
   }
   description = <<DESCRIPTION

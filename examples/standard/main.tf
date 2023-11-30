@@ -48,7 +48,7 @@ module "staticsite" {
 
     system = {
       identity_type = "SystemAssigned"
-      identity_ids = []
+      identity_ids  = []
     }
 
     /*

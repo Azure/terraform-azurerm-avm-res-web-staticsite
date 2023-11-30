@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
-# Default example
+# Standard example
 
-This deploys the module as a Free SKU Static Web App.
+This deploys the module as a Standard SKU Static Web App.
 
 ```hcl
 terraform {
@@ -43,19 +43,39 @@ module "staticsite" {
   # ...
 
   enable_telemetry    = false
-  name                = "${module.naming.static_web_app.name_unique}-free"
+  name                = "${module.naming.static_web_app.name_unique}-standard"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
+  sku_tier            = "Standard"
+  sku_size            = "Standard"
 
   identities = {
     # Identities can only be used with the Standard SKU
+
+    system = {
+      identity_type = "SystemAssigned"
+      identity_ids  = []
+    }
+
+    /*
+    user = {
+      identity_type = "UserAssigned"
+      identity_ids = []
+    }
+    */
+
+    /*
+    system_user = {
+      identity_type = "SystemAssigned, UserAssigned"
+      identity_ids = []
+    }
+    */
   }
 
   app_settings = {
     # Example
     WEBSITE_NODE_DEFAULT_VERSION = "10.14.1"
   }
-
 }
 ```
 

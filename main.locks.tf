@@ -10,7 +10,7 @@ resource "azurerm_management_lock" "this" {
 }
 
 resource "azurerm_management_lock" "pe" {
-  for_each = { for private_endpoint, pe_values in var.private_endpoints : private_endpoint => pe_values if ( (pe_values.inherit_lock && var.lock.kind != "None") || pe_values.lock.kind != "None" ) }
+  for_each = { for private_endpoint, pe_values in var.private_endpoints : private_endpoint => pe_values if((pe_values.inherit_lock && var.lock.kind != "None") || pe_values.lock.kind != "None") }
 
   name       = each.value.lock.name != null ? each.value.lock.name : (each.value.name != null ? "lock-${each.value.name}" : "lock-pe-${var.name}")
   scope      = azurerm_private_endpoint.this[each.key].id
