@@ -132,7 +132,7 @@ variable "role_assignments" {
 
   > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
   DESCRIPTION
-  }
+}
 
 variable "private_endpoints" {
   type = map(object({

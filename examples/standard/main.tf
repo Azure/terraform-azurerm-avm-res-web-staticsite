@@ -46,10 +46,12 @@ module "staticsite" {
   identities = {
     # Identities can only be used with the Standard SKU
 
+    /*
     system = {
       identity_type = "SystemAssigned"
       identity_ids  = []
     }
+    */
 
     /*
     user = {
