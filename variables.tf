@@ -11,19 +11,21 @@ DESCRIPTION
 # This is required for most resource modules
 variable "resource_group_name" {
   type        = string
+  nullable    = false
   description = "The resource group where the resources will be deployed."
 }
 
 variable "location" {
   type        = string
+  nullable    = false
   description = "Azure region where the resource should be deployed. If null, the location will be inferred from the resource group location."
-  default     = null
+
 }
 
 variable "name" {
   type        = string
+  nullable    = false
   description = "The name of the this resource."
-  default     = null
 }
 
 variable "sku_size" {
