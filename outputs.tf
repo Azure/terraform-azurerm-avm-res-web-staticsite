@@ -8,7 +8,7 @@ output "azurerm_static_site" {
 }
 
 output "uri" {
-  value       = azurerm_static_site.this.default_hostname
+  value       = azurerm_static_site.this.default_host_name
   description = "The default hostname of the static site."
 }
 
