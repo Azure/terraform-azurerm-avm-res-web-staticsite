@@ -20,16 +20,16 @@ resource "azurerm_static_site" "this" {
 
 resource "azapi_update_resource" "example" {
   count = var.repositoryUrl != null ? 1 : 0
-  
-  type = "Microsoft.Web/staticSites@2022-03-01"
+
+  type        = "Microsoft.Web/staticSites@2022-03-01"
   resource_id = azurerm_static_site.this.id
   body = jsonencode({
     properties = {
       repositoryUrl = var.repositoryUrl
-      branch = var.repositoryUrl != null ? coalesce(var.branch, "main") : null
+      branch        = var.repositoryUrl != null ? coalesce(var.branch, "main") : null
     }
   })
-  depends_on = [ azurerm_static_site.this ]
+  depends_on = [azurerm_static_site.this]
 }
 
 # Custom Domains not yet currently through AVM module
@@ -60,7 +60,7 @@ resource "azapi_update_resource" "example" {
 #   zone_name = each.value.txt_zone_name
 #   resource_group_name = coalesce(each.value.resource_group_name, var.resource_group_name)
 #   ttl = each.value.ttl
-  
+
 #   dynamic "record" {
 #     for_each = each.value.txt_records
 

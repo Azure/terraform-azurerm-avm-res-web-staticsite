@@ -71,16 +71,16 @@ module "staticsite" {
   # source             = "Azure/avm-res-web-staticsite/azurerm"
   # ...
 
-  enable_telemetry    = false
+  enable_telemetry = false
 
   name                = "${module.naming.static_web_app.name_unique}-interfaces"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
-  sku_size = "Standard"
-  sku_tier = "Standard"
+  sku_size            = "Standard"
+  sku_tier            = "Standard"
 
   repositoryUrl = ""
-  branch = ""
+  branch        = ""
 
   identities = {
     # Identities can only be used with the Standard SKU
@@ -98,8 +98,8 @@ module "staticsite" {
       identity_ids = [ azurerm_user_assigned_identity.user.id ]
     }
     */
-    
-    
+
+
     system_and_user = {
       identity_type = "SystemAssigned, UserAssigned"
       identity_ids = [

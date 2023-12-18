@@ -65,19 +65,28 @@ resource "azurerm_private_dns_zone" "example" {
 
 }
 
+resource "azurerm_user_assigned_identity" "user" {
+  name                = module.naming.user_assigned_identity.name_unique
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+}
+
 # This is the module call
 module "staticsite" {
   source = "../../"
   # source             = "Azure/avm-res-web-staticsite/azurerm"
   # ...
 
-  enable_telemetry    = false
+  enable_telemetry = false
+
   name                = "${module.naming.static_web_app.name_unique}-interfaces"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
+  sku_size            = "Standard"
+  sku_tier            = "Standard"
 
-  sku_size = "Standard"
-  sku_tier = "Standard"
+  repositoryUrl = ""
+  branch        = ""
 
   identities = {
     # Identities can only be used with the Standard SKU
@@ -85,28 +94,29 @@ module "staticsite" {
     /*
     system = {
       identity_type = "SystemAssigned"
-      identity_ids = []
+      identity_ids = [ azurerm_user_assigned_identity.system.id ]
     }
     */
 
     /*
     user = {
       identity_type = "UserAssigned"
-      identity_ids = []
+      identity_ids = [ azurerm_user_assigned_identity.user.id ]
     }
     */
 
-    /*
-    system_user = {
+
+    system_and_user = {
       identity_type = "SystemAssigned, UserAssigned"
-      identity_ids = []
+      identity_ids = [
+        azurerm_user_assigned_identity.user.id
+      ]
     }
-    */
+
   }
 
   app_settings = {
     # Example
-    WEBSITE_NODE_DEFAULT_VERSION = "10.14.1"
   }
 
   lock = {
@@ -205,6 +215,7 @@ The following resources are used by this module:
 - [azurerm_private_dns_zone.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) (resource)
 - [azurerm_resource_group.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
 - [azurerm_subnet.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) (resource)
+- [azurerm_user_assigned_identity.user](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) (resource)
 - [azurerm_virtual_network.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
 - [azurerm_client_config.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)

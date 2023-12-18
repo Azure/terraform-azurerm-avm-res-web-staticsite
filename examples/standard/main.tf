@@ -44,7 +44,7 @@ module "staticsite" {
   sku_size            = "Standard"
 
   repositoryUrl = ""
-  branch = ""
+  branch        = ""
 
   identities = {
     # Identities can only be used with the Standard SKU

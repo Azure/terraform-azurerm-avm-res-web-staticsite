@@ -3,6 +3,8 @@
 
 Module to deploy static web apps in Azure.
 
+ > Note: If you play on deploying a static web app with Terraform, you will need to manually configure the respective YAML file for the GitHub Actions workflow to run.
+
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
@@ -18,6 +20,8 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi)
+
 - <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.71.0)
 
 - <a name="provider_random"></a> [random](#provider\_random) (>= 3.5.0)
@@ -26,6 +30,7 @@ The following providers are used by this module:
 
 The following resources are used by this module:
 
+- [azapi_update_resource.example](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
 - [azurerm_management_lock.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
@@ -85,6 +90,14 @@ Description:   A map of app settings to assign to the static site.
 Type: `map(string)`
 
 Default: `{}`
+
+### <a name="input_branch"></a> [branch](#input\_branch)
+
+Description: The branch of the repository to deploy.
+
+Type: `string`
+
+Default: `null`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
@@ -193,6 +206,14 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_repositoryUrl"></a> [repositoryUrl](#input\_repositoryUrl)
+
+Description: The repository URL of the static site.
+
+Type: `string`
+
+Default: `null`
+
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
 Description:   A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
@@ -224,7 +245,7 @@ Default: `{}`
 
 ### <a name="input_sku_size"></a> [sku\_size](#input\_sku\_size)
 
-Description: The size of the SKU.
+Description: The size of the SKU. The SKU size must be one of: `Free`, `Standard`.
 
 Type: `string`
 
@@ -232,7 +253,7 @@ Default: `"Free"`
 
 ### <a name="input_sku_tier"></a> [sku\_tier](#input\_sku\_tier)
 
-Description: The tier of the SKU.
+Description: The tier of the SKU. The SKU tier must be one of: `Free`, `Standard`.
 
 Type: `string`
 

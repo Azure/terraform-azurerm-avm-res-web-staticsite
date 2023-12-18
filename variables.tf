@@ -132,7 +132,7 @@ variable "app_settings" {
 #   }
 #   description = <<DESCRIPTION
 #   A map of custom domains to assign to the static site. 
-  
+
 #   - validation_type - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`.
 #   ```terraform
 
