@@ -41,13 +41,15 @@ module "staticsite" {
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
 
+  repositoryUrl = ""
+  branch = ""
+
   identities = {
     # Identities can only be used with the Standard SKU
   }
 
   app_settings = {
     # Example
-    WEBSITE_NODE_DEFAULT_VERSION = "10.14.1"
   }
 
 }

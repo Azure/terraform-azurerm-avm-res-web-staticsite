@@ -43,6 +43,9 @@ module "staticsite" {
   sku_tier            = "Standard"
   sku_size            = "Standard"
 
+  repositoryUrl = ""
+  branch = ""
+
   identities = {
     # Identities can only be used with the Standard SKU
 
@@ -70,6 +73,5 @@ module "staticsite" {
 
   app_settings = {
     # Example
-    WEBSITE_NODE_DEFAULT_VERSION = "10.14.1"
   }
 }
