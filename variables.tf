@@ -30,7 +30,7 @@ variable "name" {
 
 variable "sku_size" {
   type        = string
-  description = "The size of the SKU."
+  description = "The size of the SKU. The SKU size must be one of: `Free`, `Standard`."
   default     = "Free"
   validation {
     condition     = contains(["Free", "Standard"], var.sku_size)
@@ -40,12 +40,24 @@ variable "sku_size" {
 
 variable "sku_tier" {
   type        = string
-  description = "The tier of the SKU."
+  description = "The tier of the SKU. The SKU tier must be one of: `Free`, `Standard`."
   default     = "Free"
   validation {
     condition     = contains(["Free", "Standard"], var.sku_tier)
     error_message = "The SKU tier must be one of: 'Free', 'Standard'."
   }
+}
+
+variable "repositoryUrl" {
+  type        = string
+  description = "The repository URL of the static site."
+  default     = null
+}
+
+variable "branch" {
+  type        = string
+  description = "The branch of the repository to deploy."
+  default     = null
 }
 
 variable "identities" {
@@ -68,8 +80,6 @@ variable "identities" {
   }
   ```
   DESCRIPTION
-
-
 }
 
 variable "app_settings" {
@@ -96,6 +106,39 @@ variable "app_settings" {
   ```
   DESCRIPTION
 }
+
+# Custom Domains not yet currently through AVM module
+
+# variable custom_domains {
+#   type = map(object({
+#     resource_group_name = optional(string)
+#     domain_name = optional(string)
+#     ttl = optional(number, 300)
+#     validation_type = optional(string, "cname-delegation")
+
+#     cname_name = optional(string)
+#     cname_zone_name = optional(string)
+#     cname_record = optional(string)
+#     cname_target_resource_id = optional(string)
+
+#     txt_name = optional(string)
+#     txt_zone_name = optional(string)
+#     txt_records = optional(map(object({value = string})))
+
+#     tags = optional(map(any), null)
+#   }))
+#   default = {
+
+#   }
+#   description = <<DESCRIPTION
+#   A map of custom domains to assign to the static site. 
+  
+#   - validation_type - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`.
+#   ```terraform
+
+#   ```
+#   DESCRIPTION
+# }
 
 variable "lock" {
   type = object({
