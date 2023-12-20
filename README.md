@@ -12,6 +12,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.5.2)
 
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 0.1.0)
+
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0)
@@ -20,7 +22,7 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_azapi"></a> [azapi](#provider\_azapi)
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (>= 0.1.0)
 
 - <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.71.0)
 
@@ -206,7 +208,7 @@ map(object({
 
 Default: `{}`
 
-### <a name="input_repositoryUrl"></a> [repositoryUrl](#input\_repositoryUrl)
+### <a name="input_repository_url"></a> [repository\_url](#input\_repository\_url)
 
 Description: The repository URL of the static site.
 

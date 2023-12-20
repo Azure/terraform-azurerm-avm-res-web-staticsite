@@ -41,8 +41,8 @@ module "staticsite" {
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
 
-  repositoryUrl = ""
-  branch        = ""
+  repository_url = ""
+  branch         = ""
 
   identities = {
     # Identities can only be used with the Standard SKU

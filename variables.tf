@@ -48,7 +48,7 @@ variable "sku_tier" {
   }
 }
 
-variable "repositoryUrl" {
+variable "repository_url" {
   type        = string
   description = "The repository URL of the static site."
   default     = null

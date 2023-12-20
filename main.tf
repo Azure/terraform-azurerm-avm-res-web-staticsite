@@ -19,14 +19,14 @@ resource "azurerm_static_site" "this" {
 }
 
 resource "azapi_update_resource" "example" {
-  count = var.repositoryUrl != null ? 1 : 0
+  count = var.repository_url != null ? 1 : 0
 
   type        = "Microsoft.Web/staticSites@2022-03-01"
   resource_id = azurerm_static_site.this.id
   body = jsonencode({
     properties = {
-      repositoryUrl = var.repositoryUrl
-      branch        = var.repositoryUrl != null ? coalesce(var.branch, "main") : null
+      repositoryUrl = var.repository_url
+      branch        = var.repository_url != null ? coalesce(var.branch, "main") : null
     }
   })
   depends_on = [azurerm_static_site.this]
