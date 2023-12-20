@@ -5,6 +5,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0, < 4.0.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = ">= 3.5.0, < 4.0.0"
+    }
   }
 }
 
@@ -36,7 +40,8 @@ module "staticsite" {
   # source             = "Azure/avm-res-web-staticsite/azurerm"
   # ...
 
-  enable_telemetry    = false
+  enable_telemetry = var.enable_telemetry
+
   name                = "${module.naming.static_web_app.name_unique}-standard"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
