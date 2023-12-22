@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
-# Default example
+# Standard example
 
-This deploys the module as a Free SKU Static Web App.
+This deploys the module as a Standard SKU Static Web App.
 
 ```hcl
 terraform {
@@ -10,10 +10,6 @@ terraform {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0, < 4.0.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = ">= 3.5.0, < 4.0.0"
     }
   }
 }
@@ -46,23 +42,44 @@ module "staticsite" {
   # source             = "Azure/avm-res-web-staticsite/azurerm"
   # ...
 
-  enable_telemetry = var.enable_telemetry
-
-  name                = "${module.naming.static_web_app.name_unique}-free"
+  enable_telemetry    = false
+  name                = "${module.naming.static_web_app.name_unique}-standard"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
+  sku_tier            = "Standard"
+  sku_size            = "Standard"
 
-  repository_url = ""
-  branch         = ""
+  repositoryUrl = ""
+  branch        = ""
 
   identities = {
     # Identities can only be used with the Standard SKU
+
+    /*
+    system = {
+      identity_type = "SystemAssigned"
+      identity_ids  = []
+    }
+    */
+
+    /*
+    user = {
+      identity_type = "UserAssigned"
+      identity_ids = []
+    }
+    */
+
+    /*
+    system_user = {
+      identity_type = "SystemAssigned, UserAssigned"
+      identity_ids = []
+    }
+    */
   }
 
   app_settings = {
     # Example
   }
-
 }
 ```
 
@@ -75,15 +92,13 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.7.0, < 4.0.0)
 
-- <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0, < 4.0.0)
-
 ## Providers
 
 The following providers are used by this module:
 
 - <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.7.0, < 4.0.0)
 
-- <a name="provider_random"></a> [random](#provider\_random) (>= 3.5.0, < 4.0.0)
+- <a name="provider_random"></a> [random](#provider\_random)
 
 ## Resources
 
