@@ -12,21 +12,21 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.5.2)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 0.1.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 0.1.0, < 1.10.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0, < 4.0.0)
 
-- <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0)
+- <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0, < 4.0.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (>= 0.1.0)
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (>= 0.1.0, < 1.10.0)
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.71.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.71.0, < 4.0.0)
 
-- <a name="provider_random"></a> [random](#provider\_random) (>= 3.5.0)
+- <a name="provider_random"></a> [random](#provider\_random) (>= 3.5.0, < 4.0.0)
 
 ## Resources
 
@@ -103,9 +103,9 @@ Default: `null`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
-Description: This variable controls whether or not telemetry is enabled for the module.  
-For more information see https://aka.ms/avm/telemetryinfo.  
-If it is set to false, then no telemetry will be collected.
+Description:   This variable controls whether or not telemetry is enabled for the module.  
+  For more information see https://aka.ms/avm/telemetryinfo.  
+  If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
