@@ -32,7 +32,9 @@ The following providers are used by this module:
 
 The following resources are used by this module:
 
-- [azapi_update_resource.example](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
+- [azapi_update_resource.this](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/update_resource) (resource)
+- [azurerm_dns_cname_record.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_cname_record) (resource)
+- [azurerm_dns_txt_record.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dns_txt_record) (resource)
 - [azurerm_management_lock.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
@@ -41,6 +43,7 @@ The following resources are used by this module:
 - [azurerm_role_assignment.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_static_site.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_site) (resource)
+- [azurerm_static_site_custom_domain.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_site_custom_domain) (resource)
 - [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
 
 <!-- markdownlint-disable MD013 -->
@@ -100,6 +103,62 @@ Description: The branch of the repository to deploy.
 Type: `string`
 
 Default: `null`
+
+### <a name="input_custom_domains"></a> [custom\_domains](#input\_custom\_domains)
+
+Description:   A map of custom domains to assign to the static site.
+
+  - `resource_group_name` - (Optional) The name of the resource group where the custom domain is located. If not set, the resource group of the static site will be used.
+  - domain\_name - (Optional) The domain name of the custom domain. If not set, the domain name will be generated from the `cname_name` and `cname_zone_name`.
+  - ttl - (Optional) The TTL of the custom domain. Defaults to 300.
+  - validation\_type - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`. Defaults to `cname-delegation`.
+  - cname\_name - (Optional) The name of the CNAME record to create for the custom domain.
+  - cname\_zone\_name - (Optional) The name of the DNS zone to create the CNAME record in.
+  - cname\_record - (Optional) The value of the CNAME record to create for the custom domain. Conflicts with `cname_target_resource_id`.
+  - cname\_target\_resource\_id - (Optional) The resource ID of the resource the CNAME record should point to. Conflicts with `cname_record`.
+  - txt\_name - (Optional) The name of the TXT record to create for the custom domain.
+  - txt\_zone\_name - (Optional) The name of the DNS zone to create the TXT record in.
+  - txt\_records - (Optional) A map of TXT records to create for the custom domain. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+    - `value` - The value of the TXT record.
+
+  ```terraform
+  custom_domains = {
+    example = {
+      resource_group_name = "example"
+      domain_name         = "example.com"
+      ttl                 = 300
+      validation_type     = "cname-delegation"
+
+      cname_name               = "www"
+      cname_zone_name          = "example.com"
+      cname_record             = "example.azurewebsites.net"
+    }
+  }
+```
+  ```
+```
+
+Type:
+
+```hcl
+map(object({
+    resource_group_name = optional(string)
+    domain_name         = optional(string)
+    ttl                 = optional(number, 300)
+    validation_type     = optional(string, "cname-delegation")
+
+    cname_name               = optional(string)
+    cname_zone_name          = optional(string)
+    cname_record             = optional(string)
+    cname_target_resource_id = optional(string)
+
+    txt_name      = optional(string)
+    txt_zone_name = optional(string)
+    txt_records   = optional(map(object({ value = string })))
+  }))
+```
+
+Default: `{}`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 

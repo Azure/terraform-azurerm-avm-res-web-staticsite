@@ -8,7 +8,6 @@ variable "enable_telemetry" {
   DESCRIPTION
 }
 
-# This is required for most resource modules
 variable "resource_group_name" {
   type        = string
   nullable    = false
@@ -109,36 +108,58 @@ variable "app_settings" {
 
 # Custom Domains not yet currently through AVM module
 
-# variable custom_domains {
-#   type = map(object({
-#     resource_group_name = optional(string)
-#     domain_name = optional(string)
-#     ttl = optional(number, 300)
-#     validation_type = optional(string, "cname-delegation")
+variable "custom_domains" {
+  type = map(object({
+    resource_group_name = optional(string)
+    domain_name         = optional(string)
+    ttl                 = optional(number, 300)
+    validation_type     = optional(string, "cname-delegation")
 
-#     cname_name = optional(string)
-#     cname_zone_name = optional(string)
-#     cname_record = optional(string)
-#     cname_target_resource_id = optional(string)
+    cname_name               = optional(string)
+    cname_zone_name          = optional(string)
+    cname_record             = optional(string)
+    cname_target_resource_id = optional(string)
 
-#     txt_name = optional(string)
-#     txt_zone_name = optional(string)
-#     txt_records = optional(map(object({value = string})))
+    txt_name      = optional(string)
+    txt_zone_name = optional(string)
+    txt_records   = optional(map(object({ value = string })))
+  }))
+  default = {
 
-#     tags = optional(map(any), null)
-#   }))
-#   default = {
+  }
+  description = <<DESCRIPTION
+  A map of custom domains to assign to the static site. 
 
-#   }
-#   description = <<DESCRIPTION
-#   A map of custom domains to assign to the static site. 
+  - `resource_group_name` - (Optional) The name of the resource group where the custom domain is located. If not set, the resource group of the static site will be used.
+  - domain_name - (Optional) The domain name of the custom domain. If not set, the domain name will be generated from the `cname_name` and `cname_zone_name`.
+  - ttl - (Optional) The TTL of the custom domain. Defaults to 300.
+  - validation_type - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`. Defaults to `cname-delegation`.
+  - cname_name - (Optional) The name of the CNAME record to create for the custom domain.
+  - cname_zone_name - (Optional) The name of the DNS zone to create the CNAME record in.
+  - cname_record - (Optional) The value of the CNAME record to create for the custom domain. Conflicts with `cname_target_resource_id`.
+  - cname_target_resource_id - (Optional) The resource ID of the resource the CNAME record should point to. Conflicts with `cname_record`.
+  - txt_name - (Optional) The name of the TXT record to create for the custom domain.
+  - txt_zone_name - (Optional) The name of the DNS zone to create the TXT record in.
+  - txt_records - (Optional) A map of TXT records to create for the custom domain. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+    - `value` - The value of the TXT record.
 
-#   - validation_type - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`.
-#   ```terraform
+  ```terraform
+  custom_domains = {
+    example = {
+      resource_group_name = "example"
+      domain_name         = "example.com"
+      ttl                 = 300
+      validation_type     = "cname-delegation"
 
-#   ```
-#   DESCRIPTION
-# }
+      cname_name               = "www"
+      cname_zone_name          = "example.com"
+      cname_record             = "example.azurewebsites.net"
+    }
+  }
+  ```
+  ```
+  DESCRIPTION
+}
 
 variable "lock" {
   type = object({
