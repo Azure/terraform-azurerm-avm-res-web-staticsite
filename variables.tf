@@ -1,84 +1,19 @@
-variable "enable_telemetry" {
-  type        = bool
-  default     = true
-  description = <<DESCRIPTION
-  This variable controls whether or not telemetry is enabled for the module.
-  For more information see https://aka.ms/avm/telemetryinfo.
-  If it is set to false, then no telemetry will be collected.
-  DESCRIPTION
-}
-
-variable "resource_group_name" {
-  type        = string
-  nullable    = false
-  description = "The resource group where the resources will be deployed."
-}
-
 variable "location" {
   type        = string
-  nullable    = false
   description = "Azure region where the resource should be deployed. If null, the location will be inferred from the resource group location."
-
+  nullable    = false
 }
 
 variable "name" {
   type        = string
-  nullable    = false
   description = "The name of the this resource."
+  nullable    = false
 }
 
-variable "sku_size" {
+variable "resource_group_name" {
   type        = string
-  description = "The size of the SKU. The SKU size must be one of: `Free`, `Standard`."
-  default     = "Free"
-  validation {
-    condition     = contains(["Free", "Standard"], var.sku_size)
-    error_message = "The SKU size must be one of: 'Free', 'Standard'."
-  }
-}
-
-variable "sku_tier" {
-  type        = string
-  description = "The tier of the SKU. The SKU tier must be one of: `Free`, `Standard`."
-  default     = "Free"
-  validation {
-    condition     = contains(["Free", "Standard"], var.sku_tier)
-    error_message = "The SKU tier must be one of: 'Free', 'Standard'."
-  }
-}
-
-variable "repository_url" {
-  type        = string
-  description = "The repository URL of the static site."
-  default     = null
-}
-
-variable "branch" {
-  type        = string
-  description = "The branch of the repository to deploy."
-  default     = null
-}
-
-variable "identities" {
-  type = map(object({
-    identity_type = optional(string, "SystemAssigned")
-    identity_ids  = optional(set(string), [])
-  }))
-  default = {
-
-  }
-  description = <<DESCRIPTION
-  A map used to assign identities to assign to the static site.
-
-  ```terraform
-  identities = { 
-    system = {
-      identity_type = "SystemAssigned"
-      identity_ids = []
-    }
-  }
-  ```
-  DESCRIPTION
+  description = "The resource group where the resources will be deployed."
+  nullable    = false
 }
 
 variable "app_settings" {
@@ -106,7 +41,11 @@ variable "app_settings" {
   DESCRIPTION
 }
 
-# Custom Domains not yet currently through AVM module
+variable "branch" {
+  type        = string
+  default     = null
+  description = "The branch of the repository to deploy."
+}
 
 variable "custom_domains" {
   type = map(object({
@@ -161,43 +100,51 @@ variable "custom_domains" {
   DESCRIPTION
 }
 
+variable "enable_telemetry" {
+  type        = bool
+  default     = true
+  description = <<DESCRIPTION
+  This variable controls whether or not telemetry is enabled for the module.
+  For more information see https://aka.ms/avm/telemetryinfo.
+  If it is set to false, then no telemetry will be collected.
+  DESCRIPTION
+}
+
+variable "identities" {
+  type = map(object({
+    identity_type         = optional(string, "SystemAssigned")
+    identity_resource_ids = optional(set(string), [])
+  }))
+  default = {
+
+  }
+  description = <<DESCRIPTION
+  A map used to assign identities to assign to the static site.
+
+  ```terraform
+  identities = { 
+    system = {
+      identity_type = "SystemAssigned"
+      identity_resource_ids = []
+    }
+  }
+  ```
+  DESCRIPTION
+}
+
 variable "lock" {
   type = object({
     name = optional(string, null)
     kind = optional(string, "None")
   })
-  description = "The lock level to apply. Default is `None`. Possible values are `None`, `CanNotDelete`, and `ReadOnly`."
   default     = {}
+  description = "The lock level to apply. Default is `None`. Possible values are `None`, `CanNotDelete`, and `ReadOnly`."
   nullable    = false
+
   validation {
     condition     = contains(["CanNotDelete", "ReadOnly", "None"], var.lock.kind)
     error_message = "The lock level must be one of: 'None', 'CanNotDelete', or 'ReadOnly'."
   }
-}
-
-variable "role_assignments" {
-  type = map(object({
-    role_definition_id_or_name             = string
-    principal_id                           = string
-    description                            = optional(string, null)
-    skip_service_principal_aad_check       = optional(bool, false)
-    condition                              = optional(string, null)
-    condition_version                      = optional(string, null)
-    delegated_managed_identity_resource_id = optional(string, null)
-  }))
-  default     = {}
-  description = <<DESCRIPTION
-  A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
-
-  - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
-  - `principal_id` - The ID of the principal to assign the role to.
-  - `description` - The description of the role assignment.
-  - `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
-  - `condition` - The condition which will be used to scope the role assignment.
-  - `condition_version` - The version of the condition syntax. Valid values are '2.0'.
-
-  > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
-  DESCRIPTION
 }
 
 variable "private_endpoints" {
@@ -251,7 +198,67 @@ variable "private_endpoints" {
   - `ip_configurations` - (Optional) A map of IP configurations to create on the private endpoint. If not specified the platform will create one. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
     - `name` - The name of the IP configuration.
     - `private_ip_address` - The private IP address of the IP configuration.
+  - `inherit_lock` - (Optional) If set to true, the private endpoint will inherit the lock level of the parent resource. Defaults to true.
+  - `inherit_tags` - (Optional) If set to true, the private endpoint will inherit the tags of the parent resource. Defaults to true.
+
+  ```terraform
   DESCRIPTION
+}
+
+variable "repository_url" {
+  type        = string
+  default     = null
+  description = "The repository URL of the static site."
+}
+
+variable "role_assignments" {
+  type = map(object({
+    role_definition_id_or_name             = string
+    principal_id                           = string
+    description                            = optional(string, null)
+    skip_service_principal_aad_check       = optional(bool, false)
+    condition                              = optional(string, null)
+    condition_version                      = optional(string, null)
+    delegated_managed_identity_resource_id = optional(string, null)
+  }))
+  default     = {}
+  description = <<DESCRIPTION
+  A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+
+  - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
+  - `principal_id` - The ID of the principal to assign the role to.
+  - `description` - The description of the role assignment.
+  - `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
+  - `condition` - The condition which will be used to scope the role assignment.
+  - `condition_version` - The version of the condition syntax. Valid values are '2.0'.
+  - delegated_managed_identity_resource_id - The resource ID of the delegated managed identity resource to assign the role to.
+
+  ```terraform
+
+  > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
+  DESCRIPTION
+}
+
+variable "sku_size" {
+  type        = string
+  default     = "Free"
+  description = "The size of the SKU. The SKU size must be one of: `Free`, `Standard`."
+
+  validation {
+    condition     = contains(["Free", "Standard"], var.sku_size)
+    error_message = "The SKU size must be one of: 'Free', 'Standard'."
+  }
+}
+
+variable "sku_tier" {
+  type        = string
+  default     = "Free"
+  description = "The tier of the SKU. The SKU tier must be one of: `Free`, `Standard`."
+
+  validation {
+    condition     = contains(["Free", "Standard"], var.sku_tier)
+    error_message = "The SKU tier must be one of: 'Free', 'Standard'."
+  }
 }
 
 variable "tags" {

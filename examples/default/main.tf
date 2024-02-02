@@ -9,6 +9,7 @@ terraform {
       source  = "hashicorp/random"
       version = ">= 3.5.0, < 4.0.0"
     }
+    prevent_deletion_if_contains_resources = false
   }
 }
 
@@ -24,21 +25,22 @@ module "naming" {
 
 # Helps pick a random region from the list of regions.
 resource "random_integer" "region_index" {
-  min = 0
   max = length(local.azure_regions) - 1
+  min = 0
 }
 
 # This is required for resource modules
 resource "azurerm_resource_group" "example" {
-  name     = module.naming.resource_group.name_unique
   location = local.azure_regions[random_integer.region_index.result]
+  name     = module.naming.resource_group.name_unique
 }
 
 # This is the module call
 module "staticsite" {
   source = "../../"
+
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # ...
+  # version = "0.1.0"
 
   enable_telemetry = var.enable_telemetry
 

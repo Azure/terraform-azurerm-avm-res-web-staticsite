@@ -24,56 +24,53 @@ module "naming" {
 
 # Helps pick a random region from the list of regions.
 resource "random_integer" "region_index" {
-  min = 0
   max = length(local.azure_regions) - 1
+  min = 0
 }
 
-data "azurerm_client_config" "this" {
-
-}
+data "azurerm_client_config" "this" {}
 
 data "azurerm_role_definition" "example" {
   name = "Contributor"
-
 }
 
 # This is required for resource modules
 resource "azurerm_resource_group" "example" {
-  name     = module.naming.resource_group.name_unique
   location = local.azure_regions[random_integer.region_index.result]
+  name     = module.naming.resource_group.name_unique
 }
 
 resource "azurerm_virtual_network" "example" {
+  address_space       = ["192.168.0.0/24"]
+  location            = azurerm_resource_group.example.location
   name                = module.naming.virtual_network.name_unique
   resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  address_space       = ["192.168.0.0/24"]
 }
 
 resource "azurerm_subnet" "example" {
+  address_prefixes     = ["192.168.0.0/24"]
   name                 = module.naming.subnet.name_unique
   resource_group_name  = azurerm_resource_group.example.name
   virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["192.168.0.0/24"]
 }
 
 resource "azurerm_private_dns_zone" "example" {
   name                = "privatelink.azurestaticapps.net"
   resource_group_name = azurerm_resource_group.example.name
-
 }
 
 resource "azurerm_user_assigned_identity" "user" {
+  location            = azurerm_resource_group.example.location
   name                = module.naming.user_assigned_identity.name_unique
   resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
 }
 
 # This is the module call
 module "staticsite" {
   source = "../../"
+
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # ...
+  # version = "0.1.0"
 
   enable_telemetry = var.enable_telemetry
 
@@ -103,14 +100,14 @@ module "staticsite" {
     }
     */
 
-
+    /*
     system_and_user = {
       identity_type = "SystemAssigned, UserAssigned"
-      identity_ids = [
+      identity_resource_ids = [
         azurerm_user_assigned_identity.user.id
       ]
     }
-
+    */
   }
 
   app_settings = {
@@ -118,6 +115,7 @@ module "staticsite" {
   }
 
   lock = {
+
     kind = "None"
 
     /*
@@ -132,6 +130,7 @@ module "staticsite" {
   private_endpoints = {
     # Use of private endpoints requires Standard SKU
     primary = {
+      name                          = "primary-interfaces"
       private_dns_zone_resource_ids = [azurerm_private_dns_zone.example.id]
       subnet_resource_id            = azurerm_subnet.example.id
 
@@ -139,7 +138,9 @@ module "staticsite" {
       inherit_tags = true
 
       lock = {
-        kind = "None"
+        /*
+        # kind = "None"
+        */
 
         /*
         kind = "ReadOnly"
@@ -162,6 +163,7 @@ module "staticsite" {
       }
 
     }
+
   }
 
   role_assignments = {

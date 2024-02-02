@@ -178,7 +178,7 @@ Description:   A map used to assign identities to assign to the static site.
   identities = {
     system = {
       identity_type = "SystemAssigned"
-      identity_ids = []
+      identity_resource_ids = []
     }
   }
 ```
@@ -187,8 +187,8 @@ Type:
 
 ```hcl
 map(object({
-    identity_type = optional(string, "SystemAssigned")
-    identity_ids  = optional(set(string), [])
+    identity_type         = optional(string, "SystemAssigned")
+    identity_resource_ids = optional(set(string), [])
   }))
 ```
 
@@ -228,6 +228,11 @@ Description:   A map of private endpoints to create on this resource. The map ke
   - `ip_configurations` - (Optional) A map of IP configurations to create on the private endpoint. If not specified the platform will create one. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
     - `name` - The name of the IP configuration.
     - `private_ip_address` - The private IP address of the IP configuration.
+  - `inherit_lock` - (Optional) If set to true, the private endpoint will inherit the lock level of the parent resource. Defaults to true.
+  - `inherit_tags` - (Optional) If set to true, the private endpoint will inherit the tags of the parent resource. Defaults to true.
+
+  ```terraform
+```
 
 Type:
 
@@ -285,8 +290,12 @@ Description:   A map of role assignments to create on this resource. The map key
   - `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
   - `condition` - The condition which will be used to scope the role assignment.
   - `condition_version` - The version of the condition syntax. Valid values are '2.0'.
+  - delegated\_managed\_identity\_resource\_id - The resource ID of the delegated managed identity resource to assign the role to.
+
+  ```terraform
 
   > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
+```
 
 Type:
 
