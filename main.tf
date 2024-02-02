@@ -8,7 +8,7 @@ resource "azurerm_static_site" "this" {
   tags                = var.tags
 
   dynamic "identity" {
-    for_each = var.identities // == null ? [] : ["identity"]
+    for_each = var.identities # == null ? [] : ["identity"]
 
     content {
       type         = identity.value.identity_type
@@ -48,6 +48,7 @@ resource "azurerm_dns_cname_record" "this" {
   ttl                 = each.value.ttl
   zone_name           = each.value.cname_zone_name
   record              = each.value.cname_record
+  tags                = var.tags
   target_resource_id  = each.value.cname_target_resource_id
 }
 
@@ -58,9 +59,10 @@ resource "azurerm_dns_txt_record" "this" {
   resource_group_name = coalesce(each.value.resource_group_name, var.resource_group_name)
   ttl                 = each.value.ttl
   zone_name           = each.value.txt_zone_name
+  tags                = var.tags
 
   dynamic "record" {
-    for_each = each.value.txt_records // == null ? [] : ["record"]
+    for_each = each.value.txt_records # == null ? [] : ["record"]
 
     content {
       value = record.value.value
