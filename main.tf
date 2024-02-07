@@ -1,32 +1,71 @@
-# TODO: insert resources here.
-data "azurerm_resource_group" "parent" {
-  count = var.location == null ? 1 : 0
-  name  = var.resource_group_name
-}
-
-resource "azurerm_TODO_the_resource_for_this_module" "this" {
-  name                = var.name # calling code must supply the name
+resource "azurerm_static_site" "this" {
+  location            = coalesce(var.location)
+  name                = var.name
   resource_group_name = var.resource_group_name
-  location            = coalesce(var.location, data.azurerm_resource_group.parent[0].location)
-  // etc
+  app_settings        = var.app_settings
+  sku_size            = var.sku_size
+  sku_tier            = var.sku_tier
+  tags                = var.tags
+
+  dynamic "identity" {
+    for_each = var.identities # == null ? [] : ["identity"]
+
+    content {
+      type         = identity.value.identity_type
+      identity_ids = identity.value.identity_resource_ids
+    }
+  }
 }
 
-# required AVM resources interfaces
-resource "azurerm_management_lock" "this" {
-  count      = var.lock.kind != "None" ? 1 : 0
-  name       = coalesce(var.lock.name, "lock-${var.name}")
-  scope      = azurerm_TODO_resource.this.id
-  lock_level = var.lock.kind
+resource "azapi_update_resource" "this" {
+  count = var.repository_url != null ? 1 : 0
+
+  type = "Microsoft.Web/staticSites@2022-03-01"
+  body = jsonencode({
+    properties = {
+      repositoryUrl = var.repository_url
+      branch        = var.repository_url != null ? coalesce(var.branch, "main") : null
+    }
+  })
+  resource_id = azurerm_static_site.this.id
+
+  depends_on = [azurerm_static_site.this]
 }
 
-resource "azurerm_role_assignment" "this" {
-  for_each                               = var.role_assignments
-  scope                                  = azurerm_TODO_resource.this.id
-  role_definition_id                     = strcontains(lower(each.value.role_definition_id_or_name), lower(local.role_definition_resource_substring)) ? each.value.role_definition_id_or_name : null
-  role_definition_name                   = strcontains(lower(each.value.role_definition_id_or_name), lower(local.role_definition_resource_substring)) ? null : each.value.role_definition_id_or_name
-  principal_id                           = each.value.principal_id
-  condition                              = each.value.condition
-  condition_version                      = each.value.condition_version
-  skip_service_principal_aad_check       = each.value.skip_service_principal_aad_check
-  delegated_managed_identity_resource_id = each.value.delegated_managed_identity_resource_id
+resource "azurerm_static_site_custom_domain" "this" {
+  for_each = var.custom_domains
+
+  domain_name     = coalesce(each.value.domain_name, "${each.value.cname_name}.${each.value.cname_zone_name}")
+  static_site_id  = azurerm_static_site.this.id
+  validation_type = each.value.validation_type
+}
+
+resource "azurerm_dns_cname_record" "this" {
+  for_each = var.custom_domains
+
+  name                = each.value.cname_name
+  resource_group_name = coalesce(each.value.resource_group_name, var.resource_group_name)
+  ttl                 = each.value.ttl
+  zone_name           = each.value.cname_zone_name
+  record              = each.value.cname_record
+  tags                = var.tags
+  target_resource_id  = each.value.cname_target_resource_id
+}
+
+resource "azurerm_dns_txt_record" "this" {
+  for_each = var.custom_domains
+
+  name                = each.value.txt_name
+  resource_group_name = coalesce(each.value.resource_group_name, var.resource_group_name)
+  ttl                 = each.value.ttl
+  zone_name           = each.value.txt_zone_name
+  tags                = var.tags
+
+  dynamic "record" {
+    for_each = each.value.txt_records # == null ? [] : ["record"]
+
+    content {
+      value = record.value.value
+    }
+  }
 }
