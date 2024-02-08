@@ -1,6 +1,10 @@
 terraform {
   required_version = ">= 1.6.0" # needs to be updated to 1.6.1 for this particular example
   required_providers {
+    azapi = {
+      source  = "Azure/azapi"
+      version = ">=1.9.0"
+    }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0, < 4.0.0"
@@ -8,10 +12,6 @@ terraform {
     random = {
       source  = "hashicorp/random"
       version = ">= 3.5.0, < 4.0.0"
-    }
-    azapi = {
-      source  = "Azure/azapi"
-      version = ">=1.9.0"
     }
   }
 }
@@ -191,7 +191,7 @@ module "staticsite" {
 
 check "dns" {
   data "azurerm_private_dns_a_record" "assertion" {
-    name                = module.naming.static_web_app.name_unique
+    name                = local.split_subdomain[0]
     zone_name           = azurerm_private_dns_zone.example.name
     resource_group_name = azurerm_resource_group.example.name
   }
@@ -211,18 +211,18 @@ module "regions" {
 }
 
 #seed the test regions 
-locals {
-  test_regions = ["centralus", "eastasia", "westus2", "eastus2", "westeurope", "japaneast"]
-}
+# locals {
+#   test_regions = ["centralus", "eastasia", "westus2", "eastus2", "westeurope", "japaneast"]
+# }
 
 # This allows us to randomize the region for the resource group.
 resource "random_integer" "region_index_vm" {
-  max = length(local.test_regions) - 1
+  max = length(local.azure_regions) - 1
   min = 0
 }
 
 resource "random_integer" "zone_index" {
-  max = length(module.regions.regions_by_name[local.test_regions[random_integer.region_index_vm.result]].zones)
+  max = length(module.regions.regions_by_name[local.azure_regions[random_integer.region_index_vm.result]].zones)
   min = 1
 }
 
@@ -256,25 +256,24 @@ locals {
   #filter the location output for the current region, virtual machine resources, and filter out entries that don't include the capabilities list
   location_valid_vms = [
     for location in jsondecode(data.azapi_resource_list.example.output).value : location
-    if contains(location.locations, local.test_regions[random_integer.region_index_vm.result]) && #if the sku location field matches the selected location
-    length(location.restrictions) < 1 &&                                                          #and there are no restrictions on deploying the sku (i.e. allowed for deployment)
-    location.resourceType == "virtualMachines" &&                                                 #and the sku is a virtual machine
-    !strcontains(location.name, "C") &&                                                           #no confidential vm skus
-    !strcontains(location.name, "B") &&                                                           #no B skus
-    try(location.capabilities, []) != []                                                          #avoid skus where the capabilities list isn't defined
+    if contains(location.locations, local.azure_regions[random_integer.region_index_vm.result]) && #if the sku location field matches the selected location
+    length(location.restrictions) < 1 &&                                                           #and there are no restrictions on deploying the sku (i.e. allowed for deployment)
+    location.resourceType == "virtualMachines" &&                                                  #and the sku is a virtual machine
+    !strcontains(location.name, "C") &&                                                            #no confidential vm skus
+    !strcontains(location.name, "B") &&                                                            #no B skus
+    try(location.capabilities, []) != []                                                           #avoid skus where the capabilities list isn't defined
   ]
 }
 
 #create the virtual machine
-module "avm-res-compute-virtualmachine" {
+module "avm_res_compute_virtualmachine" {
   # source = "../../"
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
   version = "0.4.0"
 
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  name                = "${module.naming.virtual_machine.name_unique}-tf"
-  # admin_credential_key_vault_resource_id = module.avm-res-keyvault-vault.resource.id
+  resource_group_name     = azurerm_resource_group.example.name
+  location                = azurerm_resource_group.example.location
+  name                    = "${module.naming.virtual_machine.name_unique}-tf"
   virtualmachine_sku_size = local.deploy_skus[random_integer.deploy_sku.result].name
 
   virtualmachine_os_type = "Windows"
@@ -312,9 +311,3 @@ module "avm-res-compute-virtualmachine" {
 
 }
 
-
-output "vm" {
-  value     = module.avm-res-compute-virtualmachine.virtual_machine
-  sensitive = true
-}
-# */
