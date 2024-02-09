@@ -261,7 +261,7 @@ locals {
     location.resourceType == "virtualMachines" &&                                                  # and the sku is a virtual machine
     !strcontains(location.name, "C") &&                                                            # no confidential vm skus
     !strcontains(location.name, "B") &&                                                            # no B skus
-    length(try(location.capabilities, [])) > 1 # avoid skus where the capabilities list isn't defined
+    length(try(location.capabilities, [])) > 1                                                     # avoid skus where the capabilities list isn't defined
     # try(location.capabilities, []) != []                                                           # avoid skus where the capabilities list isn't defined
   ]
 }

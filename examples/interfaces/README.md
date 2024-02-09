@@ -262,12 +262,13 @@ locals {
   #filter the location output for the current region, virtual machine resources, and filter out entries that don't include the capabilities list
   location_valid_vms = [
     for location in jsondecode(data.azapi_resource_list.example.output).value : location
-    if contains(location.locations, local.azure_regions[random_integer.region_index_vm.result]) && #if the sku location field matches the selected location
-    length(location.restrictions) < 1 &&                                                           #and there are no restrictions on deploying the sku (i.e. allowed for deployment)
-    location.resourceType == "virtualMachines" &&                                                  #and the sku is a virtual machine
-    !strcontains(location.name, "C") &&                                                            #no confidential vm skus
-    !strcontains(location.name, "B") &&                                                            #no B skus
-    try(location.capabilities, []) != []                                                           #avoid skus where the capabilities list isn't defined
+    if contains(location.locations, local.azure_regions[random_integer.region_index_vm.result]) && # if the sku location field matches the selected location
+    length(location.restrictions) < 1 &&                                                           # and there are no restrictions on deploying the sku (i.e. allowed for deployment)
+    location.resourceType == "virtualMachines" &&                                                  # and the sku is a virtual machine
+    !strcontains(location.name, "C") &&                                                            # no confidential vm skus
+    !strcontains(location.name, "B") &&                                                            # no B skus
+    length(try(location.capabilities, [])) > 1                                                     # avoid skus where the capabilities list isn't defined
+    # try(location.capabilities, []) != []                                                           # avoid skus where the capabilities list isn't defined
   ]
 }
 

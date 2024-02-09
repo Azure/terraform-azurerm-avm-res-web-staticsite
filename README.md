@@ -349,15 +349,23 @@ Default: `{}`
 
 The following outputs are exported:
 
-### <a name="output_azurerm_static_site"></a> [azurerm\_static\_site](#output\_azurerm\_static\_site)
+### <a name="output_name"></a> [name](#output\_name)
+
+Description: The name of the static site.
+
+### <a name="output_resource"></a> [resource](#output\_resource)
 
 Description: This is the full output for the resource.
 
-### <a name="output_private_endpoints"></a> [private\_endpoints](#output\_private\_endpoints)
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The ID of the static site.
+
+### <a name="output_resource_private_endpoints"></a> [resource\_private\_endpoints](#output\_resource\_private\_endpoints)
 
 Description: A map of private endpoints. The map key is the supplied input to var.private\_endpoints. The map value is the entire azurerm\_private\_endpoint resource.
 
-### <a name="output_uri"></a> [uri](#output\_uri)
+### <a name="output_resource_uri"></a> [resource\_uri](#output\_resource\_uri)
 
 Description: The default hostname of the static site.
 

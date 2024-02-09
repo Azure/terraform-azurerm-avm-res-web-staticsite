@@ -1,6 +1,3 @@
-# Module owners should include the full resource via a 'resource' output
-# https://azure.github.io/Azure-Verified-Modules/specs/terraform/#id-tffr2---category-outputs---additional-terraform-outputs
-
 output "name" {
   description = "The name of the static site."
   value       = azurerm_static_site.this.name
