@@ -54,14 +54,16 @@ variable "custom_domains" {
     ttl                 = optional(number, 300)
     validation_type     = optional(string, "cname-delegation")
 
+    create_cname_records     = optional(bool, false)
     cname_name               = optional(string)
     cname_zone_name          = optional(string)
     cname_record             = optional(string)
     cname_target_resource_id = optional(string)
 
-    txt_name      = optional(string)
-    txt_zone_name = optional(string)
-    txt_records   = optional(map(object({ value = string })))
+    create_txt_records = optional(bool, false)
+    txt_name           = optional(string)
+    txt_zone_name      = optional(string)
+    txt_records        = optional(map(object({ value = string })))
   }))
   default = {
 

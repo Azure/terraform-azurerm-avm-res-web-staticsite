@@ -41,43 +41,33 @@ module "staticsite" {
   # source             = "Azure/avm-res-web-staticsite/azurerm"
   # version = "0.1.1"
 
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry = false
 
-  name                = "${module.naming.static_web_app.name_unique}-standard"
+  name                = "${module.naming.static_web_app.name_unique}-custom-domain"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
-  sku_tier            = "Standard"
-  sku_size            = "Standard"
 
   repository_url = ""
   branch         = ""
 
+  custom_domains = {
+    /*
+    custom_domain_1 = {
+      resource_group_name  = "<resource_group_name_of_dns_zone>"
+      create_cname_records = true
+      cname_name           = "${module.naming.static_web_app.name_unique}"
+      cname_zone_name      = "<dns_zone_name>"
+      cname_record         = "${module.staticsite.resource_uri}"
+    }
+    */
+  }
+
   identities = {
     # Identities can only be used with the Standard SKU
-
-    /*
-    system = {
-      identity_type = "SystemAssigned"
-      identity_resource_ids  = []
-    }
-    */
-
-    /*
-    user = {
-      identity_type = "UserAssigned"
-      identity_resource_ids = []
-    }
-    */
-
-    /*
-    system_user = {
-      identity_type = "SystemAssigned, UserAssigned"
-      identity_resource_ids = []
-    }
-    */
   }
 
   app_settings = {
     # Example
   }
+
 }

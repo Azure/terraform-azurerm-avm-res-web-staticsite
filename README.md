@@ -3,7 +3,7 @@
 
 Module to deploy static web apps in Azure.
 
- > Note: If you play on deploying a static web app with Terraform, you will need to manually configure the respective YAML file for the GitHub Actions workflow to run.
+ > Note: After the Static Site is provisioned, you'll need to associate your target repository, which contains your web app, to the Static Site, by following the Azure Static Site document. This includes manually configuring the respective YAML file for the GitHub Actions workflow to run.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
@@ -147,14 +147,16 @@ map(object({
     ttl                 = optional(number, 300)
     validation_type     = optional(string, "cname-delegation")
 
+    create_cname_records     = optional(bool, false)
     cname_name               = optional(string)
     cname_zone_name          = optional(string)
     cname_record             = optional(string)
     cname_target_resource_id = optional(string)
 
-    txt_name      = optional(string)
-    txt_zone_name = optional(string)
-    txt_records   = optional(map(object({ value = string })))
+    create_txt_records = optional(bool, false)
+    txt_name           = optional(string)
+    txt_zone_name      = optional(string)
+    txt_records        = optional(map(object({ value = string })))
   }))
 ```
 
