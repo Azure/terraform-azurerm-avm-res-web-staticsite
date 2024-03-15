@@ -21,7 +21,7 @@ resource "azurerm_static_site" "this" {
 
 # /*
 # BREAKING CHANGE 
-resource "azurerm_static_web_app" "this" { 
+resource "azurerm_static_web_app" "this" {
   location            = coalesce(var.location)
   name                = var.name
   resource_group_name = var.resource_group_name
@@ -53,10 +53,6 @@ resource "azapi_update_resource" "this" {
   })
   # resource_id = azurerm_static_site.this.id
   resource_id = azurerm_static_web_app.this.id # BREAKING CHANGE
-
-  # depends_on = [
-  #   azurerm_static_site.this
-  # ]
 
   depends_on = [
     azurerm_static_web_app.this

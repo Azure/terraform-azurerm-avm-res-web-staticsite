@@ -3,15 +3,8 @@ resource "azurerm_management_lock" "this" {
 
   lock_level = var.lock.kind
   name       = coalesce(var.lock.name, "lock-${var.name}")
-
   # scope      = azurerm_static_site.this.id
-  scope      = azurerm_static_web_app.this.id
-
-  # depends_on = [
-  #   azurerm_static_site.this,
-  #   azurerm_private_endpoint.this,
-  #   azurerm_role_assignment.this
-  # ]
+  scope = azurerm_static_web_app.this.id
 
   depends_on = [
     azurerm_static_web_app.this,
@@ -26,12 +19,6 @@ resource "azurerm_management_lock" "pe" {
   lock_level = each.value.inherit_lock ? var.lock.kind : each.value.lock.kind
   name       = each.value.lock.name != null ? each.value.lock.name : (each.value.name != null ? "lock-${each.value.name}" : "lock-pe-${var.name}")
   scope      = azurerm_private_endpoint.this[each.key].id
-
-  # depends_on = [
-  #   azurerm_static_site.this,
-  #   azurerm_private_endpoint.this,
-  #   azurerm_role_assignment.this
-  # ]
 
   depends_on = [
     azurerm_static_web_app.this,

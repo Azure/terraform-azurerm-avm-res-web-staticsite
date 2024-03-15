@@ -42,8 +42,8 @@ The following resources are used by this module:
 - [azurerm_resource_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) (resource)
 - [azurerm_role_assignment.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_static_site.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_site) (resource)
-- [azurerm_static_site_custom_domain.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_site_custom_domain) (resource)
+- [azurerm_static_web_app.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_web_app) (resource)
+- [azurerm_static_web_app_custom_domain.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_web_app_custom_domain) (resource)
 - [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
 
 <!-- markdownlint-disable MD013 -->
@@ -371,7 +371,7 @@ Description: A map of private endpoints. The map key is the supplied input to va
 
 ### <a name="output_resource_uri"></a> [resource\_uri](#output\_resource\_uri)
 
-Description: The default hostname of the static site.
+Description: The default hostname of the static web app.
 
 ## Modules
 

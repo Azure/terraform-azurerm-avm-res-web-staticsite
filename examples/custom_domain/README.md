@@ -45,27 +45,24 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.1.1"
+  # version = "0.2.0"
 
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry = false # var.enable_telemetry
 
   name                = "${module.naming.static_web_app.name_unique}-custom-domain"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
 
-  repository_url = ""
-  branch         = ""
-
   custom_domains = {
-    /*
+    # /*
     custom_domain_1 = {
-      resource_group_name  = "<resource_group_name_of_dns_zone>"
+      resource_group_name  = "rg-personal-domain"
       create_cname_records = true
       cname_name           = "${module.naming.static_web_app.name_unique}"
-      cname_zone_name      = "<dns_zone_name>"
-      cname_record         = "${module.staticsite.resource_uri}"
+      cname_zone_name      = "donvmccoy.com"
+      # cname_record         = "${module.staticsite.resource_uri}"
     }
-    */
+    # */
   }
 
   identities = {

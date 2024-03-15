@@ -15,15 +15,15 @@
 resource "azurerm_static_web_app_custom_domain" "this" {
   for_each = var.custom_domains
 
-  domain_name     = coalesce(each.value.domain_name, "${each.value.cname_name}.${each.value.cname_zone_name}")
-  static_web_app_id  = azurerm_static_web_app.this.id
-  validation_type = each.value.validation_type
+  domain_name       = coalesce(each.value.domain_name, "${each.value.cname_name}.${each.value.cname_zone_name}")
+  static_web_app_id = azurerm_static_web_app.this.id
+  validation_type   = each.value.validation_type
 
-  depends_on = [ 
+  depends_on = [
     azurerm_static_web_app.this,
     azurerm_dns_cname_record.this,
     azurerm_dns_txt_record.this
-   ]
+  ]
 }
 
 resource "azurerm_dns_cname_record" "this" {
@@ -37,11 +37,7 @@ resource "azurerm_dns_cname_record" "this" {
   tags                = var.tags
   target_resource_id  = each.value.cname_target_resource_id
 
-  # depends_on = [ 
-  #   azurerm_static_site.this
-  # ]
-
-  depends_on = [ 
+  depends_on = [
     azurerm_static_web_app.this
   ]
 }
@@ -63,11 +59,7 @@ resource "azurerm_dns_txt_record" "this" {
     }
   }
 
-  # depends_on = [ 
-  #   azurerm_static_site.this
-  #  ]
-
-  depends_on = [ 
+  depends_on = [
     azurerm_static_web_app.this
   ]
 }
