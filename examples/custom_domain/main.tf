@@ -49,12 +49,11 @@ module "staticsite" {
 
   custom_domains = {
     /*
+    # Creating a custom domain with CNAME record currently requires multiple `terraform apply` regardless of depends_on blocks. 
+    # To avoid, create the CNAME record manually FIRST in terraform/azure after Static Web App is created, and then create custom domain.
     custom_domain_1 = {
-      resource_group_name  = ""
-      create_cname_records = true
-      cname_name           = module.naming.static_web_app.name_unique
-      cname_zone_name      = ""
-      # cname_record         = module.staticsite.resource_uri
+      resource_group_name  = "<resource_group_name_of_dns_zone>"
+      domain_name          = "<custom_domain_name>"
     }
     */
   }
