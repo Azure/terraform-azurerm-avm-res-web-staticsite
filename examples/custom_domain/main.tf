@@ -41,7 +41,7 @@ module "staticsite" {
   # source             = "Azure/avm-res-web-staticsite/azurerm"
   # version = "0.2.0"
 
-  enable_telemetry = false # var.enable_telemetry
+  enable_telemetry = var.enable_telemetry
 
   name                = "${module.naming.static_web_app.name_unique}-custom-domain"
   resource_group_name = azurerm_resource_group.example.name
