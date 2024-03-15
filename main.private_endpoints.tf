@@ -12,7 +12,8 @@ resource "azurerm_private_endpoint" "this" {
   private_service_connection {
     is_manual_connection           = false
     name                           = each.value.private_service_connection_name != null ? each.value.private_service_connection_name : "pse-${var.name}"
-    private_connection_resource_id = azurerm_static_site.this.id
+    # private_connection_resource_id = azurerm_static_site.this.id
+    private_connection_resource_id = azurerm_static_web_app.this.id
     subresource_names              = ["staticSites"]
   }
   dynamic "ip_configuration" {
