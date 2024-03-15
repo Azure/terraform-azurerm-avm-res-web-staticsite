@@ -33,9 +33,10 @@ resource "azurerm_dns_cname_record" "this" {
   resource_group_name = coalesce(each.value.resource_group_name, var.resource_group_name)
   ttl                 = each.value.ttl
   zone_name           = each.value.cname_zone_name
-  record              = coalesce(each.value.cname_record, azurerm_static_site.this.default_host_name)
-  tags                = var.tags
-  target_resource_id  = each.value.cname_target_resource_id
+  # record              = coalesce(each.value.cname_record, azurerm_static_site.this.default_host_name)
+  record             = coalesce(each.value.cname_record, azurerm_static_web_app.this.default_host_name)
+  tags               = var.tags
+  target_resource_id = each.value.cname_target_resource_id
 
   depends_on = [
     azurerm_static_web_app.this
