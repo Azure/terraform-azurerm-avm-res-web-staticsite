@@ -50,11 +50,11 @@ module "staticsite" {
   custom_domains = {
     /*
     custom_domain_1 = {
-      resource_group_name  = "n"
+      resource_group_name  = ""
       create_cname_records = true
-      cname_name           = "${module.naming.static_web_app.name_unique}"
+      cname_name           = module.naming.static_web_app.name_unique
       cname_zone_name      = ""
-      # cname_record         = "${module.staticsite.resource_uri}"
+      # cname_record         = module.staticsite.resource_uri
     }
     */
   }

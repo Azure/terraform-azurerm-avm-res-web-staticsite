@@ -54,15 +54,15 @@ module "staticsite" {
   location            = azurerm_resource_group.example.location
 
   custom_domains = {
-    # /*
+    /*
     custom_domain_1 = {
-      resource_group_name  = "rg-personal-domain"
+      resource_group_name  = ""
       create_cname_records = true
-      cname_name           = "${module.naming.static_web_app.name_unique}"
-      cname_zone_name      = "donvmccoy.com"
-      # cname_record         = "${module.staticsite.resource_uri}"
+      cname_name           = module.naming.static_web_app.name_unique
+      cname_zone_name      = ""
+      # cname_record         = module.staticsite.resource_uri
     }
-    # */
+    */
   }
 
   identities = {
