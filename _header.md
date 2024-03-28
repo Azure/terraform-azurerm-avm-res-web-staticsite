@@ -2,4 +2,4 @@
 
 Module to deploy static web apps in Azure.
 
- > Note: If you play on deploying a static web app with Terraform, you will need to manually configure the respective YAML file for the GitHub Actions workflow to run.
+ > Note: After the Static Site is provisioned, you'll need to associate your target repository, which contains your web app, to the Static Site, by following the Azure Static Site document. This includes manually configuring the respective YAML file for the GitHub Actions workflow to run.

@@ -3,7 +3,7 @@
 
 Module to deploy static web apps in Azure.
 
- > Note: If you play on deploying a static web app with Terraform, you will need to manually configure the respective YAML file for the GitHub Actions workflow to run.
+ > Note: After the Static Site is provisioned, you'll need to associate your target repository, which contains your web app, to the Static Site, by following the Azure Static Site document. This includes manually configuring the respective YAML file for the GitHub Actions workflow to run.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
@@ -42,8 +42,8 @@ The following resources are used by this module:
 - [azurerm_resource_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) (resource)
 - [azurerm_role_assignment.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
-- [azurerm_static_site.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_site) (resource)
-- [azurerm_static_site_custom_domain.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_site_custom_domain) (resource)
+- [azurerm_static_web_app.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_web_app) (resource)
+- [azurerm_static_web_app_custom_domain.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/static_web_app_custom_domain) (resource)
 - [random_id.telem](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) (resource)
 
 <!-- markdownlint-disable MD013 -->
@@ -109,16 +109,18 @@ Default: `null`
 Description:   A map of custom domains to assign to the static site.
 
   - `resource_group_name` - (Optional) The name of the resource group where the custom domain is located. If not set, the resource group of the static site will be used.
-  - domain\_name - (Optional) The domain name of the custom domain. If not set, the domain name will be generated from the `cname_name` and `cname_zone_name`.
-  - ttl - (Optional) The TTL of the custom domain. Defaults to 300.
-  - validation\_type - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`. Defaults to `cname-delegation`.
-  - cname\_name - (Optional) The name of the CNAME record to create for the custom domain.
-  - cname\_zone\_name - (Optional) The name of the DNS zone to create the CNAME record in.
-  - cname\_record - (Optional) The value of the CNAME record to create for the custom domain. Conflicts with `cname_target_resource_id`.
-  - cname\_target\_resource\_id - (Optional) The resource ID of the resource the CNAME record should point to. Conflicts with `cname_record`.
-  - txt\_name - (Optional) The name of the TXT record to create for the custom domain.
-  - txt\_zone\_name - (Optional) The name of the DNS zone to create the TXT record in.
-  - txt\_records - (Optional) A map of TXT records to create for the custom domain. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
+  - `domain_name` - (Optional) The domain name of the custom domain. If not set, the domain name will be generated from the `cname_name` and `cname_zone_name`.
+  - `ttl` - (Optional) The TTL of the custom domain. Defaults to 300.
+  - `validation_type` - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`. Defaults to `cname-delegation`.
+  - `create_cname_records` - (Optional) If set to true, CNAME records will be created for the custom domain. Defaults to false.
+  - `create_txt_records` - (Optional) If set to true, TXT records will be created for the custom domain. Defaults to false.
+  - `cname_name` - (Optional) The name of the CNAME record to create for the custom domain.
+  - `cname_zone_name` - (Optional) The name of the DNS zone to create the CNAME record in.
+  - `cname_record` - (Optional) The value of the CNAME record to create for the custom domain. Conflicts with `cname_target_resource_id`.
+  - `cname_target_resource_id` - (Optional) The resource ID of the resource the CNAME record should point to. Conflicts with `cname_record`.
+  - `txt_name` - (Optional) The name of the TXT record to create for the custom domain.
+  - `txt_zone_name` - (Optional) The name of the DNS zone to create the TXT record in.
+  - `txt_records` - (Optional) A map of TXT records to create for the custom domain. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
     - `value` - The value of the TXT record.
 
   ```terraform
@@ -147,14 +149,16 @@ map(object({
     ttl                 = optional(number, 300)
     validation_type     = optional(string, "cname-delegation")
 
+    create_cname_records     = optional(bool, false)
     cname_name               = optional(string)
     cname_zone_name          = optional(string)
     cname_record             = optional(string)
     cname_target_resource_id = optional(string)
 
-    txt_name      = optional(string)
-    txt_zone_name = optional(string)
-    txt_records   = optional(map(object({ value = string })))
+    create_txt_records = optional(bool, false)
+    txt_name           = optional(string)
+    txt_zone_name      = optional(string)
+    txt_records        = optional(map(object({ value = string })))
   }))
 ```
 
@@ -367,7 +371,7 @@ Description: A map of private endpoints. The map key is the supplied input to va
 
 ### <a name="output_resource_uri"></a> [resource\_uri](#output\_resource\_uri)
 
-Description: The default hostname of the static site.
+Description: The default hostname of the static web app.
 
 ## Modules
 

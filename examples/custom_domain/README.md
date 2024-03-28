@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
-# Standard example
+# Default example
 
-This deploys the module as a Standard SKU Static Web App.
+This deploys the module as a Static Web App that can use a custom domain.
 
 ```hcl
 terraform {
@@ -49,43 +49,29 @@ module "staticsite" {
 
   enable_telemetry = var.enable_telemetry
 
-  name                = "${module.naming.static_web_app.name_unique}-standard"
+  name                = "${module.naming.static_web_app.name_unique}-custom-domain"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
-  sku_tier            = "Standard"
-  sku_size            = "Standard"
 
-  repository_url = ""
-  branch         = ""
+  custom_domains = {
+    /*
+    # Creating a custom domain with CNAME record currently requires multiple `terraform apply` regardless of depends_on blocks. 
+    # To avoid, create the CNAME record manually FIRST in terraform/azure after Static Web App is created, and then create custom domain.
+    custom_domain_1 = {
+      resource_group_name  = "<resource_group_name_of_dns_zone>"
+      domain_name          = "<custom_domain_name>"
+    }
+    */
+  }
 
   identities = {
     # Identities can only be used with the Standard SKU
-
-    /*
-    system = {
-      identity_type = "SystemAssigned"
-      identity_resource_ids  = []
-    }
-    */
-
-    /*
-    user = {
-      identity_type = "UserAssigned"
-      identity_resource_ids = []
-    }
-    */
-
-    /*
-    system_user = {
-      identity_type = "SystemAssigned, UserAssigned"
-      identity_resource_ids = []
-    }
-    */
   }
 
   app_settings = {
     # Example
   }
+
 }
 ```
 

@@ -43,12 +43,20 @@ module "staticsite" {
 
   enable_telemetry = var.enable_telemetry
 
-  name                = "${module.naming.static_web_app.name_unique}-free"
+  name                = "${module.naming.static_web_app.name_unique}-custom-domain"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
 
-  repository_url = ""
-  branch         = ""
+  custom_domains = {
+    /*
+    # Creating a custom domain with CNAME record currently requires multiple `terraform apply` regardless of depends_on blocks. 
+    # To avoid, create the CNAME record manually FIRST in terraform/azure after Static Web App is created, and then create custom domain.
+    custom_domain_1 = {
+      resource_group_name  = "<resource_group_name_of_dns_zone>"
+      domain_name          = "<custom_domain_name>"
+    }
+    */
+  }
 
   identities = {
     # Identities can only be used with the Standard SKU
