@@ -100,7 +100,6 @@ variable "custom_domains" {
     }
   }
   ```
-  ```
   DESCRIPTION
 }
 
