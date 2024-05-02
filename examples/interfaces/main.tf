@@ -17,7 +17,11 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 # This ensures we have unique CAF compliant names for our resources.
@@ -81,7 +85,7 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.2.0"
+  # version = "0.3.0"
 
   enable_telemetry = var.enable_telemetry
 
@@ -94,7 +98,7 @@ module "staticsite" {
   repository_url = ""
   branch         = ""
 
-  identities = {
+  managed_identities = {
     # Identities can only be used with the Standard SKU
 
     /*
@@ -104,12 +108,12 @@ module "staticsite" {
     }
     */
 
-    /*
+
     user = {
       identity_type = "UserAssigned"
-      identity_ids = [ azurerm_user_assigned_identity.user.id ]
+      identity_ids  = [azurerm_user_assigned_identity.user.id]
     }
-    */
+
 
     /*
     system_and_user = {
@@ -125,18 +129,16 @@ module "staticsite" {
     # Example
   }
 
-  lock = {
+  # lock = {
 
-    kind = "None"
+  #   /*
+  #   kind = "ReadOnly"
+  #   */
 
-    /*
-    kind = "ReadOnly"
-    */
-
-    /*
-    kind = "CanNotDelete"
-    */
-  }
+  #   /*
+  #   kind = "CanNotDelete"
+  #   */
+  # }
 
   private_endpoints = {
     # Use of private endpoints requires Standard SKU
@@ -145,22 +147,16 @@ module "staticsite" {
       private_dns_zone_resource_ids = [azurerm_private_dns_zone.example.id]
       subnet_resource_id            = azurerm_subnet.example.id
 
-      inherit_lock = true
-      inherit_tags = true
+      # lock = {
 
-      lock = {
-        /*
-        # kind = "None"
-        */
+      #   /*
+      #   kind = "ReadOnly"
+      #   */
 
-        /*
-        kind = "ReadOnly"
-        */
-
-        /*
-        kind = "CanNotDelete"
-        */
-      }
+      #   /*
+      #   kind = "CanNotDelete"
+      #   */
+      # }
 
       role_assignments = {
         role_assignment_1 = {

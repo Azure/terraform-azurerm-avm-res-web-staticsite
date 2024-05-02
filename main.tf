@@ -31,7 +31,7 @@ resource "azurerm_static_web_app" "this" {
   tags                = var.tags
 
   dynamic "identity" {
-    for_each = var.identities # == null ? [] : ["identity"]
+    for_each = local.managed_identities.system_assigned_user_assigned
 
     content {
       type         = identity.value.identity_type

@@ -16,6 +16,18 @@ variable "resource_group_name" {
   nullable    = false
 }
 
+variable "all_child_resources_inherit_lock" {
+  type        = bool
+  default     = true
+  description = "Whether all child resources should inherit the locks of the parent resource."
+}
+
+variable "all_child_resources_inherit_tags" {
+  type        = bool
+  default     = true
+  description = "Whether all child resources should inherit the tags of the parent resource."
+}
+
 variable "app_settings" {
   type = map(string)
   default = {
@@ -113,41 +125,34 @@ variable "enable_telemetry" {
   DESCRIPTION
 }
 
-variable "identities" {
-  type = map(object({
-    identity_type         = optional(string, "SystemAssigned")
-    identity_resource_ids = optional(set(string), [])
-  }))
-  default = {
-
-  }
-  description = <<DESCRIPTION
-  A map used to assign identities to assign to the static site.
-
-  ```terraform
-  identities = { 
-    system = {
-      identity_type = "SystemAssigned"
-      identity_resource_ids = []
-    }
-  }
-  ```
-  DESCRIPTION
-}
-
 variable "lock" {
   type = object({
+    kind = string
     name = optional(string, null)
-    kind = optional(string, "None")
   })
-  default     = {}
-  description = "The lock level to apply. Default is `None`. Possible values are `None`, `CanNotDelete`, and `ReadOnly`."
-  nullable    = false
+  default     = null
+  description = "The lock level to apply. Default is `None`. Possible values are `CanNotDelete` and `ReadOnly`."
 
   validation {
-    condition     = contains(["CanNotDelete", "ReadOnly", "None"], var.lock.kind)
-    error_message = "The lock level must be one of: 'None', 'CanNotDelete', or 'ReadOnly'."
+    condition     = var.lock != null ? contains(["CanNotDelete", "ReadOnly"], var.lock.kind) : true
+    error_message = "The lock level must be one of: `CanNotDelete` or `ReadOnly`."
   }
+}
+
+variable "managed_identities" {
+  type = object({
+    system_assigned            = optional(bool, false)
+    user_assigned_resource_ids = optional(set(string), [])
+  })
+  default     = {}
+  description = <<DESCRIPTION
+  Controls the Managed Identity configuration on this resource. The following properties can be specified:
+  
+  - `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled.
+  - `user_assigned_resource_ids` - (Optional) Specifies a list of User Assigned Managed Identity resource IDs to be assigned to this resource.
+
+  DESCRIPTION
+  nullable    = false
 }
 
 variable "private_endpoints" {
@@ -163,10 +168,10 @@ variable "private_endpoints" {
       delegated_managed_identity_resource_id = optional(string, null)
     })), {})
     lock = optional(object({
+      kind = string
       name = optional(string, null)
-      kind = optional(string, "None")
-    }), {})
-    tags                                    = optional(map(any), null)
+    }), null)
+    tags                                    = optional(map(string), null)
     subnet_resource_id                      = string
     private_dns_zone_group_name             = optional(string, "default")
     private_dns_zone_resource_ids           = optional(set(string), [])
@@ -179,8 +184,6 @@ variable "private_endpoints" {
       name               = string
       private_ip_address = string
     })), {})
-    inherit_lock = optional(bool, true)
-    inherit_tags = optional(bool, true)
   }))
   default     = {}
   description = <<DESCRIPTION
@@ -206,6 +209,20 @@ variable "private_endpoints" {
 
   ```terraform
   DESCRIPTION
+  nullable    = false
+}
+
+variable "private_endpoints_inherit_lock" {
+  type        = bool
+  default     = true
+  description = "Whether private endpoints should inherit the lock of the parent resource."
+}
+
+variable "private_endpoints_manage_dns_zone_group" {
+  type        = bool
+  default     = true
+  description = "Whether to manage private DNS zone groups with this module. If set to false, you must manage private DNS zone groups externally, e.g. using Azure Policy."
+  nullable    = false
 }
 
 variable "repository_url" {
@@ -240,6 +257,7 @@ variable "role_assignments" {
 
   > Note: only set `skip_service_principal_aad_check` to true if you are assigning a role to a service principal.
   DESCRIPTION
+  nullable    = false
 }
 
 variable "sku_size" {
@@ -265,19 +283,9 @@ variable "sku_tier" {
 }
 
 variable "tags" {
-  type = map(any)
-  default = {
-
-  }
+  type        = map(string)
+  default     = null
   description = <<DESCRIPTION
-  A map of tags that will be applied to the Load Balancer. 
-  
-  ```terraform
-  tags = {
-    key           = "value"
-    "another-key" = "another-value"
-    integers      = 123
-  }
-  ```
+  A map of tags that will be applied to the Static Web App.
   DESCRIPTION
 }
