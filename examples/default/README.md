@@ -19,7 +19,11 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 # This ensures we have unique CAF compliant names for our resources.
@@ -45,7 +49,7 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.2.0"
+  # version = "0.3.0"
 
   enable_telemetry = var.enable_telemetry
 
@@ -55,10 +59,6 @@ module "staticsite" {
 
   repository_url = ""
   branch         = ""
-
-  identities = {
-    # Identities can only be used with the Standard SKU
-  }
 
   app_settings = {
     # Example

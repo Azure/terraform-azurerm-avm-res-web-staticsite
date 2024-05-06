@@ -38,6 +38,7 @@ The following resources are used by this module:
 - [azurerm_management_lock.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
 - [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
+- [azurerm_private_endpoint.this_unmanaged_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
 - [azurerm_private_endpoint_application_security_group_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint_application_security_group_association) (resource)
 - [azurerm_resource_group_template_deployment.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) (resource)
 - [azurerm_role_assignment.pe](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
@@ -72,6 +73,22 @@ Type: `string`
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_all_child_resources_inherit_lock"></a> [all\_child\_resources\_inherit\_lock](#input\_all\_child\_resources\_inherit\_lock)
+
+Description: Whether all child resources should inherit the locks of the parent resource.
+
+Type: `bool`
+
+Default: `true`
+
+### <a name="input_all_child_resources_inherit_tags"></a> [all\_child\_resources\_inherit\_tags](#input\_all\_child\_resources\_inherit\_tags)
+
+Description: Whether all child resources should inherit the tags of the parent resource.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_app_settings"></a> [app\_settings](#input\_app\_settings)
 
@@ -172,40 +189,34 @@ Type: `bool`
 
 Default: `true`
 
-### <a name="input_identities"></a> [identities](#input\_identities)
-
-Description:   A map used to assign identities to assign to the static site.
-
-  ```terraform
-  identities = {
-    system = {
-      identity_type = "SystemAssigned"
-      identity_resource_ids = []
-    }
-  }
-```
-
-Type:
-
-```hcl
-map(object({
-    identity_type         = optional(string, "SystemAssigned")
-    identity_resource_ids = optional(set(string), [])
-  }))
-```
-
-Default: `{}`
-
 ### <a name="input_lock"></a> [lock](#input\_lock)
 
-Description: The lock level to apply. Default is `None`. Possible values are `None`, `CanNotDelete`, and `ReadOnly`.
+Description: The lock level to apply. Default is `None`. Possible values are `CanNotDelete` and `ReadOnly`.
 
 Type:
 
 ```hcl
 object({
+    kind = string
     name = optional(string, null)
-    kind = optional(string, "None")
+  })
+```
+
+Default: `null`
+
+### <a name="input_managed_identities"></a> [managed\_identities](#input\_managed\_identities)
+
+Description:   Controls the Managed Identity configuration on this resource. The following properties can be specified:
+
+  - `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled.
+  - `user_assigned_resource_ids` - (Optional) Specifies a list of User Assigned Managed Identity resource IDs to be assigned to this resource.
+
+Type:
+
+```hcl
+object({
+    system_assigned            = optional(bool, false)
+    user_assigned_resource_ids = optional(set(string), [])
   })
 ```
 
@@ -251,10 +262,10 @@ map(object({
       delegated_managed_identity_resource_id = optional(string, null)
     })), {})
     lock = optional(object({
+      kind = string
       name = optional(string, null)
-      kind = optional(string, "None")
-    }), {})
-    tags                                    = optional(map(any), null)
+    }), null)
+    tags                                    = optional(map(string), null)
     subnet_resource_id                      = string
     private_dns_zone_group_name             = optional(string, "default")
     private_dns_zone_resource_ids           = optional(set(string), [])
@@ -267,12 +278,26 @@ map(object({
       name               = string
       private_ip_address = string
     })), {})
-    inherit_lock = optional(bool, true)
-    inherit_tags = optional(bool, true)
   }))
 ```
 
 Default: `{}`
+
+### <a name="input_private_endpoints_inherit_lock"></a> [private\_endpoints\_inherit\_lock](#input\_private\_endpoints\_inherit\_lock)
+
+Description: Whether private endpoints should inherit the lock of the parent resource.
+
+Type: `bool`
+
+Default: `true`
+
+### <a name="input_private_endpoints_manage_dns_zone_group"></a> [private\_endpoints\_manage\_dns\_zone\_group](#input\_private\_endpoints\_manage\_dns\_zone\_group)
+
+Description: Whether to manage private DNS zone groups with this module. If set to false, you must manage private DNS zone groups externally, e.g. using Azure Policy.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_repository_url"></a> [repository\_url](#input\_repository\_url)
 
@@ -333,19 +358,11 @@ Default: `"Free"`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
-Description:   A map of tags that will be applied to the Load Balancer.
+Description:   A map of tags that will be applied to the Static Web App.
 
-  ```terraform
-  tags = {
-    key           = "value"
-    "another-key" = "another-value"
-    integers      = 123
-  }
-```
+Type: `map(string)`
 
-Type: `map(any)`
-
-Default: `{}`
+Default: `null`
 
 ## Outputs
 
