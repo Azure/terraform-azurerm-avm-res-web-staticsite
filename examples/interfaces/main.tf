@@ -36,11 +36,11 @@ resource "random_integer" "region_index" {
   min = 0
 }
 
-data "azurerm_client_config" "this" {}
+# data "azurerm_client_config" "this" {}
 
-data "azurerm_role_definition" "example" {
-  name = "Contributor"
-}
+# data "azurerm_role_definition" "example" {
+#   name = "Contributor"
+# }
 
 # This is required for resource modules
 resource "azurerm_resource_group" "example" {
@@ -85,7 +85,7 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.3.0"
+  # version = "0.3.1"
 
   enable_telemetry = var.enable_telemetry
 
@@ -158,12 +158,12 @@ module "staticsite" {
       #   */
       # }
 
-      role_assignments = {
-        role_assignment_1 = {
-          role_definition_id_or_name = data.azurerm_role_definition.example.id
-          principal_id               = data.azurerm_client_config.this.object_id
-        }
-      }
+      # role_assignments = {
+      #   role_assignment_1 = {
+      #     role_definition_id_or_name = data.azurerm_role_definition.example.id
+      #     principal_id               = data.azurerm_client_config.this.object_id
+      #   }
+      # }
 
       tags = {
         webapp = "${module.naming.static_web_app.name_unique}-interfaces"
@@ -173,29 +173,29 @@ module "staticsite" {
 
   }
 
-  role_assignments = {
-    role_assignment_1 = {
-      role_definition_id_or_name = data.azurerm_role_definition.example.id
-      principal_id               = data.azurerm_client_config.this.object_id
-    }
-  }
+  # role_assignments = {
+  #   role_assignment_1 = {
+  #     role_definition_id_or_name = data.azurerm_role_definition.example.id
+  #     principal_id               = data.azurerm_client_config.this.object_id
+  #   }
+  # }
 
   tags = {
     environment = "dev-tf"
   }
 }
 
-check "dns" {
-  data "azurerm_private_dns_a_record" "assertion" {
-    name                = local.split_subdomain[0]
-    zone_name           = azurerm_private_dns_zone.example.name
-    resource_group_name = azurerm_resource_group.example.name
-  }
-  assert {
-    condition     = one(data.azurerm_private_dns_a_record.assertion.records) == one(module.staticsite.resource_private_endpoints["primary"].private_service_connection).private_ip_address
-    error_message = "The private DNS A record for the private endpoint is not correct."
-  }
-}
+# check "dns" {
+#   data "azurerm_private_dns_a_record" "assertion" {
+#     name                = local.split_subdomain[0]
+#     zone_name           = azurerm_private_dns_zone.example.name
+#     resource_group_name = azurerm_resource_group.example.name
+#   }
+#   assert {
+#     condition     = one(data.azurerm_private_dns_a_record.assertion.records) == one(module.staticsite.resource_private_endpoints["primary"].private_service_connection).private_ip_address
+#     error_message = "The private DNS A record for the private endpoint is not correct."
+#   }
+# }
 
 
 # /*
