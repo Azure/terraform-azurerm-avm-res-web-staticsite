@@ -8,6 +8,7 @@ output "name" {
 output "resource" {
   description = "This is the full output for the resource."
   value       = azurerm_static_web_app.this
+  sensitive   = true
 }
 
 output "resource_id" {
