@@ -1,5 +1,3 @@
-# /*
-# Outputs for azurerm_static_web_app
 output "name" {
   description = "The name of the static site."
   value       = azurerm_static_web_app.this.name
@@ -7,11 +5,13 @@ output "name" {
 
 output "resource" {
   description = "This is the full output for the resource."
+  sensitive   = true
   value       = azurerm_static_web_app.this
 }
 
 output "resource_id" {
   description = "The ID of the static site."
+  sensitive   = true
   value       = azurerm_static_web_app.this.id
 }
 

@@ -49,7 +49,7 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.3.2"
+  # version = "0.3.3"
 
   enable_telemetry = var.enable_telemetry
 
@@ -115,7 +115,19 @@ Default: `true`
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_resource"></a> [resource](#output\_resource)
+
+Description: The full output of the static site.
+
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The resource id of the static site.
+
+### <a name="output_resource_uri"></a> [resource\_uri](#output\_resource\_uri)
+
+Description: The default hostname of the static web app.
 
 ## Modules
 
