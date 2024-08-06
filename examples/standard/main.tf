@@ -53,10 +53,7 @@ module "staticsite" {
   sku_tier            = "Standard"
   sku_size            = "Standard"
 
-  repository_url = ""
-  branch         = ""
-
   app_settings = {
-    # Example
+
   }
 }
