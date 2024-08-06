@@ -4,7 +4,7 @@ terraform {
     # TODO: Ensure all required providers are listed here.
     azapi = {
       source  = "azure/azapi"
-      version = ">= 0.1.0, < 1.10.0"
+      version = ">= 0.1.0, < 1.14.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"

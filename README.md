@@ -12,7 +12,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.5.2)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 0.1.0, < 1.10.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 0.1.0, < 1.14.0)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0, < 4.0.0)
 
@@ -24,7 +24,7 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (>= 0.1.0, < 1.10.0)
+- <a name="provider_azapi"></a> [azapi](#provider\_azapi) (>= 0.1.0, < 1.14.0)
 
 - <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (>= 3.71.0, < 4.0.0)
 
