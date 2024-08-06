@@ -7,10 +7,10 @@ This deploys the module as a Standard SKU Static Web App.
 terraform {
   required_version = ">= 1.6.1"
   required_providers {
-    azapi = {
-      source  = "Azure/azapi"
-      version = ">= 1.9.0, < 1.14.0"
-    }
+    # azapi = {
+    #   source  = "Azure/azapi"
+    #   version = ">= 1.9.0, < 1.14.0"
+    # }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0, < 4.0.0"
@@ -208,9 +208,6 @@ module "regions" {
   version = ">= 0.4.0"
 }
 
-### this segment of code gets valid vm skus for deployment in the current subscription
-data "azurerm_subscription" "current" {}
-
 resource "random_integer" "zone_index" {
   max = length(module.regions.regions_by_name[local.azure_regions[random_integer.region_index.result]].zones)
   min = 1
@@ -298,8 +295,6 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.6.1)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 1.9.0, < 1.14.0)
-
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.7.0, < 4.0.0)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0, < 4.0.0)
@@ -326,7 +321,6 @@ The following resources are used by this module:
 - [azurerm_virtual_network.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
 - [random_integer.zone_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
-- [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs

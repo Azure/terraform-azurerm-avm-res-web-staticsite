@@ -1,10 +1,10 @@
 terraform {
   required_version = ">= 1.6.1"
   required_providers {
-    azapi = {
-      source  = "Azure/azapi"
-      version = ">= 1.9.0, < 1.14.0"
-    }
+    # azapi = {
+    #   source  = "Azure/azapi"
+    #   version = ">= 1.9.0, < 1.14.0"
+    # }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0, < 4.0.0"
@@ -201,9 +201,6 @@ module "regions" {
   source  = "Azure/regions/azurerm"
   version = ">= 0.4.0"
 }
-
-### this segment of code gets valid vm skus for deployment in the current subscription
-data "azurerm_subscription" "current" {}
 
 resource "random_integer" "zone_index" {
   max = length(module.regions.regions_by_name[local.azure_regions[random_integer.region_index.result]].zones)
