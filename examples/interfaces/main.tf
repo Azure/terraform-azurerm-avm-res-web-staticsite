@@ -95,9 +95,6 @@ module "staticsite" {
   sku_size            = "Standard"
   sku_tier            = "Standard"
 
-  repository_url = ""
-  branch         = ""
-
   managed_identities = {
     # Identities can only be used with the Standard SKU
 
@@ -108,12 +105,10 @@ module "staticsite" {
     }
     */
 
-
     user = {
       identity_type = "UserAssigned"
       identity_ids  = [azurerm_user_assigned_identity.user.id]
     }
-
 
     /*
     system_and_user = {
@@ -126,7 +121,7 @@ module "staticsite" {
   }
 
   app_settings = {
-    # Example
+
   }
 
   # lock = {

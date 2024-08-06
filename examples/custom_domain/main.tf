@@ -63,7 +63,7 @@ module "staticsite" {
   }
 
   app_settings = {
-    # Example
+
   }
 
 }
