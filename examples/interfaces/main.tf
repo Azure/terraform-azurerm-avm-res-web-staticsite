@@ -1,10 +1,10 @@
 terraform {
-  required_version = ">= 1.6.0" # needs to be updated to 1.6.1 for this particular example
+  required_version = ">= 1.6.1"
   required_providers {
-    azapi = {
-      source  = "Azure/azapi"
-      version = ">=1.9.0"
-    }
+    # azapi = {
+    #   source  = "Azure/azapi"
+    #   version = ">= 1.9.0, < 1.14.0"
+    # }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0, < 4.0.0"
@@ -85,7 +85,7 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.3.2"
+  # version = "0.3.3"
 
   enable_telemetry = var.enable_telemetry
 
@@ -94,9 +94,6 @@ module "staticsite" {
   location            = azurerm_resource_group.example.location
   sku_size            = "Standard"
   sku_tier            = "Standard"
-
-  repository_url = ""
-  branch         = ""
 
   managed_identities = {
     # Identities can only be used with the Standard SKU
@@ -108,12 +105,10 @@ module "staticsite" {
     }
     */
 
-
     user = {
       identity_type = "UserAssigned"
       identity_ids  = [azurerm_user_assigned_identity.user.id]
     }
-
 
     /*
     system_and_user = {
@@ -126,7 +121,7 @@ module "staticsite" {
   }
 
   app_settings = {
-    # Example
+
   }
 
   # lock = {
@@ -199,6 +194,7 @@ module "staticsite" {
 
 
 # /*
+
 # VM to test private endpoint connectivity
 
 module "regions" {
@@ -206,75 +202,45 @@ module "regions" {
   version = ">= 0.4.0"
 }
 
-#seed the test regions 
-# locals {
-#   test_regions = ["centralus", "eastasia", "westus2", "eastus2", "westeurope", "japaneast"]
-# }
-
-# This allows us to randomize the region for the resource group.
-resource "random_integer" "region_index_vm" {
-  max = length(local.azure_regions) - 1
-  min = 0
-}
-
 resource "random_integer" "zone_index" {
-  max = length(module.regions.regions_by_name[local.azure_regions[random_integer.region_index_vm.result]].zones)
+  max = length(module.regions.regions_by_name[local.azure_regions[random_integer.region_index.result]].zones)
   min = 1
 }
 
-resource "random_integer" "deploy_sku" {
-  max = length(local.deploy_skus) - 1
-  min = 0
+resource "azurerm_network_security_group" "example" {
+  location            = azurerm_resource_group.example.location
+  name                = module.naming.network_security_group.name_unique
+  resource_group_name = azurerm_resource_group.example.name
 }
 
-### this segment of code gets valid vm skus for deployment in the current subscription
-data "azurerm_subscription" "current" {}
-
-#get the full sku list (azapi doesn't currently have a good way to filter the api call)
-data "azapi_resource_list" "example" {
-  parent_id              = data.azurerm_subscription.current.id
-  type                   = "Microsoft.Compute/skus@2021-07-01"
-  response_export_values = ["*"]
+resource "azurerm_network_security_rule" "example" {
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = "AllowAllRDPInbound"
+  network_security_group_name = azurerm_network_security_group.example.name
+  priority                    = 100
+  protocol                    = "Tcp"
+  resource_group_name         = azurerm_resource_group.example.name
+  destination_address_prefix  = "*"
+  destination_port_range      = "3389"
+  source_address_prefix       = "*"
+  source_port_range           = "*"
 }
 
-locals {
-  #filter the region virtual machines by desired capabilities (v1/v2 support, 2 cpu, and encryption at host)
-  deploy_skus = [
-    for sku in local.location_valid_vms : sku
-    if length([
-      for capability in sku.capabilities : capability
-      if(capability.name == "HyperVGenerations" && capability.value == "V1,V2") ||
-      (capability.name == "vCPUs" && capability.value == "2") ||
-      (capability.name == "EncryptionAtHostSupported" && capability.value == "True") ||
-      (capability.name == "CpuArchitectureType" && capability.value == "x64")
-    ]) == 4
-  ]
-  #filter the location output for the current region, virtual machine resources, and filter out entries that don't include the capabilities list
-  location_valid_vms = [
-    for location in jsondecode(data.azapi_resource_list.example.output).value : location
-    if contains(location.locations, local.azure_regions[random_integer.region_index_vm.result]) && # if the sku location field matches the selected location
-    length(location.restrictions) < 1 &&                                                           # and there are no restrictions on deploying the sku (i.e. allowed for deployment)
-    location.resourceType == "virtualMachines" &&                                                  # and the sku is a virtual machine
-    !strcontains(location.name, "C") &&                                                            # no confidential vm skus
-    !strcontains(location.name, "B") &&                                                            # no B skus
-    length(try(location.capabilities, [])) > 1                                                     # avoid skus where the capabilities list isn't defined
-    # try(location.capabilities, []) != []                                                           # avoid skus where the capabilities list isn't defined
-  ]
-}
-
-#create the virtual machine
+# Create the virtual machine
 module "avm_res_compute_virtualmachine" {
-  # source = "../../"
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.4.0"
+  version = "0.15.1"
 
-  resource_group_name     = azurerm_resource_group.example.name
-  location                = azurerm_resource_group.example.location
-  name                    = "${module.naming.virtual_machine.name_unique}-tf"
-  virtualmachine_sku_size = local.deploy_skus[random_integer.deploy_sku.result].name
+  enable_telemetry = var.enable_telemetry
 
-  virtualmachine_os_type = "Windows"
-  zone                   = random_integer.zone_index.result
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  name                = "${module.naming.virtual_machine.name_unique}-tf"
+  sku_size            = module.avm_res_compute_virtualmachine_sku_selector.sku
+  os_type             = "Windows"
+
+  zone = random_integer.zone_index.result
 
   generate_admin_password_or_ssh_key = false
   admin_username                     = "TestAdmin"
@@ -308,3 +274,9 @@ module "avm_res_compute_virtualmachine" {
 
 }
 
+module "avm_res_compute_virtualmachine_sku_selector" {
+  source  = "Azure/avm-res-compute-virtualmachine/azurerm//modules/sku_selector"
+  version = "0.15.1"
+
+  deployment_region = azurerm_resource_group.example.location
+}

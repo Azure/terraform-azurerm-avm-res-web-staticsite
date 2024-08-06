@@ -43,7 +43,7 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.3.2"
+  # version = "0.3.3"
 
   enable_telemetry = var.enable_telemetry
 
@@ -51,11 +51,8 @@ module "staticsite" {
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
 
-  repository_url = ""
-  branch         = ""
-
   app_settings = {
-    # Example
+
   }
 
 }
