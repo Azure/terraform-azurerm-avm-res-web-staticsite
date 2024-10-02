@@ -53,6 +53,31 @@ variable "app_settings" {
   DESCRIPTION
 }
 
+variable "basic_auth" {
+  type = object({
+    password     = string
+    environments = string
+  })
+  default     = null
+  description = <<DESCRIPTION
+  Object that controls basic authentication access
+
+  ```terraform
+
+  basic auth = {
+    password = "P@55word1234"
+    environments = "StagingEnvironment"
+  }
+
+  ```
+  DESCRIPTION
+
+  validation {
+    condition     = var.basic_auth != null ? contains(["AllEnvironments", "StagingEnvironments"], var.basic_auth.environments) : true
+    error_message = "Allowed values for `environments`: `AllEnvironments` and `StagingEnvironments`."
+  }
+}
+
 variable "branch" {
   type        = string
   default     = null

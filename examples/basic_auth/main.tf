@@ -43,16 +43,24 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.3.4"
+  # version = "0.3.3"
 
   enable_telemetry = var.enable_telemetry
 
-  name                = "${module.naming.static_web_app.name_unique}-free"
+  name                = "${module.naming.static_web_app.name_unique}-basic-auth"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
 
+  sku_size = "Standard"
+  sku_tier = "Standard"
+
   app_settings = {
 
+  }
+
+  basic_auth = {
+    password     = "P@55word1234"
+    environments = "StagingEnvironments"
   }
 
 }
