@@ -10,11 +10,11 @@ Module to deploy Static Web Apps in Azure.
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.5.2)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.7.0)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (>= 0.1.0, < 1.14.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0, < 4.0.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0, < 5.0.0)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
@@ -113,7 +113,7 @@ Description:   Object that controls basic authentication access
 
   ```terraform
 
-  basic auth = {
+  basic_auth = {
     password = "P@55word1234"
     environments = "StagingEnvironment"
   }
@@ -131,6 +131,14 @@ object({
 
 Default: `null`
 
+### <a name="input_basic_auth_enabled"></a> [basic\_auth\_enabled](#input\_basic\_auth\_enabled)
+
+Description: Whether or not basic authentication should be enabled. Needs to be set to `true` in order for `basic_auth` credentials to be evaluated. Defaults to `false`.
+
+Type: `bool`
+
+Default: `false`
+
 ### <a name="input_branch"></a> [branch](#input\_branch)
 
 Description: The branch of the repository to deploy.
@@ -138,6 +146,14 @@ Description: The branch of the repository to deploy.
 Type: `string`
 
 Default: `null`
+
+### <a name="input_configuration_file_changes_enabled"></a> [configuration\_file\_changes\_enabled](#input\_configuration\_file\_changes\_enabled)
+
+Description: Should changes to the configuration file be permitted? Defaults to `true`.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_custom_domains"></a> [custom\_domains](#input\_custom\_domains)
 
@@ -239,6 +255,14 @@ object({
 ```
 
 Default: `{}`
+
+### <a name="input_preview_environments_enabled"></a> [preview\_environments\_enabled](#input\_preview\_environments\_enabled)
+
+Description:  Are Preview (Staging) environments enabled? Defaults to `true`.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_private_endpoints"></a> [private\_endpoints](#input\_private\_endpoints)
 

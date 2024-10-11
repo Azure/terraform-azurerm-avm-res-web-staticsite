@@ -64,13 +64,14 @@ variable "basic_auth" {
 
   ```terraform
 
-  basic auth = {
+  basic_auth = {
     password = "P@55word1234"
     environments = "StagingEnvironment"
   }
 
   ```
   DESCRIPTION
+  sensitive   = true
 
   validation {
     condition     = var.basic_auth != null ? contains(["AllEnvironments", "StagingEnvironments"], var.basic_auth.environments) : true
@@ -78,10 +79,22 @@ variable "basic_auth" {
   }
 }
 
+variable "basic_auth_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether or not basic authentication should be enabled. Needs to be set to `true` in order for `basic_auth` credentials to be evaluated. Defaults to `false`."
+}
+
 variable "branch" {
   type        = string
   default     = null
   description = "The branch of the repository to deploy."
+}
+
+variable "configuration_file_changes_enabled" {
+  type        = bool
+  default     = true
+  description = "Should changes to the configuration file be permitted? Defaults to `true`."
 }
 
 variable "custom_domains" {
@@ -178,6 +191,12 @@ variable "managed_identities" {
 
   DESCRIPTION
   nullable    = false
+}
+
+variable "preview_environments_enabled" {
+  type        = bool
+  default     = true
+  description = " Are Preview (Staging) environments enabled? Defaults to `true`."
 }
 
 variable "private_endpoints" {

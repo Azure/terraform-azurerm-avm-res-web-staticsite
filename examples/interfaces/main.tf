@@ -85,7 +85,7 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.3.3"
+  # version = "0.4.0"
 
   enable_telemetry = var.enable_telemetry
 
