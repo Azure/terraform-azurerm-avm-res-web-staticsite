@@ -7,10 +7,6 @@ This deploys the module as a Standard SKU Static Web App.
 terraform {
   required_version = ">= 1.6.1"
   required_providers {
-    # azapi = {
-    #   source  = "Azure/azapi"
-    #   version = ">= 1.9.0, < 1.14.0"
-    # }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0, < 4.0.0"
@@ -33,7 +29,7 @@ provider "azurerm" {
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = "0.4.0"
+  version = "0.4.1"
 }
 
 # Helps pick a random region from the list of regions.
@@ -199,7 +195,7 @@ module "staticsite" {
 # }
 
 
-# /*
+/*
 
 # VM to test private endpoint connectivity
 
@@ -236,7 +232,7 @@ resource "azurerm_network_security_rule" "example" {
 # Create the virtual machine
 module "avm_res_compute_virtualmachine" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.15.1"
+  version = "0.16.0"
 
   enable_telemetry = var.enable_telemetry
 
@@ -282,10 +278,12 @@ module "avm_res_compute_virtualmachine" {
 
 module "avm_res_compute_virtualmachine_sku_selector" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm//modules/sku_selector"
-  version = "0.15.1"
+  version = "0.16.0"
 
   deployment_region = azurerm_resource_group.example.location
 }
+
+*/
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -303,8 +301,6 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
-- [azurerm_network_security_group.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) (resource)
-- [azurerm_network_security_rule.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) (resource)
 - [azurerm_private_dns_zone.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) (resource)
 - [azurerm_private_dns_zone_virtual_network_link.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) (resource)
 - [azurerm_resource_group.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
@@ -312,7 +308,6 @@ The following resources are used by this module:
 - [azurerm_user_assigned_identity.user](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) (resource)
 - [azurerm_virtual_network.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
-- [random_integer.zone_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -353,29 +348,11 @@ Description: The default hostname of the static web app.
 
 The following Modules are called:
 
-### <a name="module_avm_res_compute_virtualmachine"></a> [avm\_res\_compute\_virtualmachine](#module\_avm\_res\_compute\_virtualmachine)
-
-Source: Azure/avm-res-compute-virtualmachine/azurerm
-
-Version: 0.15.1
-
-### <a name="module_avm_res_compute_virtualmachine_sku_selector"></a> [avm\_res\_compute\_virtualmachine\_sku\_selector](#module\_avm\_res\_compute\_virtualmachine\_sku\_selector)
-
-Source: Azure/avm-res-compute-virtualmachine/azurerm//modules/sku_selector
-
-Version: 0.15.1
-
 ### <a name="module_naming"></a> [naming](#module\_naming)
 
 Source: Azure/naming/azurerm
 
-Version: 0.4.0
-
-### <a name="module_regions"></a> [regions](#module\_regions)
-
-Source: Azure/regions/azurerm
-
-Version: >= 0.4.0
+Version: 0.4.1
 
 ### <a name="module_staticsite"></a> [staticsite](#module\_staticsite)
 
