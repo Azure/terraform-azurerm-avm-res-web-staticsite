@@ -1,10 +1,6 @@
 terraform {
   required_version = ">= 1.6.1"
   required_providers {
-    # azapi = {
-    #   source  = "Azure/azapi"
-    #   version = ">= 1.9.0, < 1.14.0"
-    # }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = ">= 3.7.0, < 4.0.0"
@@ -27,7 +23,7 @@ provider "azurerm" {
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = "0.4.0"
+  version = "0.4.1"
 }
 
 # Helps pick a random region from the list of regions.
@@ -85,7 +81,7 @@ module "staticsite" {
   source = "../../"
 
   # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.3.3"
+  # version = "0.4.0"
 
   enable_telemetry = var.enable_telemetry
 
@@ -193,7 +189,7 @@ module "staticsite" {
 # }
 
 
-# /*
+/*
 
 # VM to test private endpoint connectivity
 
@@ -230,7 +226,7 @@ resource "azurerm_network_security_rule" "example" {
 # Create the virtual machine
 module "avm_res_compute_virtualmachine" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.15.1"
+  version = "0.16.0"
 
   enable_telemetry = var.enable_telemetry
 
@@ -276,7 +272,9 @@ module "avm_res_compute_virtualmachine" {
 
 module "avm_res_compute_virtualmachine_sku_selector" {
   source  = "Azure/avm-res-compute-virtualmachine/azurerm//modules/sku_selector"
-  version = "0.15.1"
+  version = "0.16.0"
 
   deployment_region = azurerm_resource_group.example.location
 }
+
+*/

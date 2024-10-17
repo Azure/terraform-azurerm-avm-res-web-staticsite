@@ -1,15 +1,15 @@
 <!-- BEGIN_TF_DOCS -->
-# Standard example
+# Default example
 
-This deploys the module as a Standard SKU Static Web App.
+This deploys the module as a Standard SKU Static Web App that leverages basic authentication.
 
 ```hcl
 terraform {
-  required_version = ">= 1.6.0"
+  required_version = ">= 1.9.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">= 3.7.0, < 4.0.0"
+      version = ">= 3.71.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -44,6 +44,62 @@ resource "azurerm_resource_group" "example" {
   name     = module.naming.resource_group.name_unique
 }
 
+data "azurerm_client_config" "current" {}
+
+resource "random_password" "basic_auth_password" {
+  length           = 22
+  min_lower        = 2
+  min_numeric      = 2
+  min_special      = 2
+  min_upper        = 2
+  override_special = "!#$%&()*+,-./:;<=>?@[]^_{|}~"
+  special          = true
+}
+
+module "avm_res_keyvault_vault" {
+  source                      = "Azure/avm-res-keyvault-vault/azurerm"
+  version                     = "0.9.1"
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  name                        = module.naming.key_vault.name_unique
+  resource_group_name         = azurerm_resource_group.example.name
+  location                    = azurerm_resource_group.example.location
+  enabled_for_disk_encryption = true
+  network_acls = {
+    default_action = "Allow"
+    bypass         = "AzureServices"
+  }
+
+  role_assignments = {
+    deployment_user_secrets = { #give the deployment user access to secrets
+      role_definition_id_or_name = "Key Vault Secrets Officer"
+      principal_id               = data.azurerm_client_config.current.object_id
+    }
+  }
+
+  wait_for_rbac_before_key_operations = {
+    create = "60s"
+  }
+
+  wait_for_rbac_before_secret_operations = {
+    create = "60s"
+  }
+
+  secrets = {
+    basic_auth_password = {
+      name = "basic-auth-password"
+    }
+  }
+
+  secrets_value = {
+    basic_auth_password = random_password.basic_auth_password.result
+  }
+
+  tags = {
+
+  }
+
+}
+
 # This is the module call
 module "staticsite" {
   source = "../../"
@@ -53,15 +109,25 @@ module "staticsite" {
 
   enable_telemetry = var.enable_telemetry
 
-  name                = "${module.naming.static_web_app.name_unique}-standard"
+  name                = "${module.naming.static_web_app.name_unique}-basic-auth"
   resource_group_name = azurerm_resource_group.example.name
   location            = azurerm_resource_group.example.location
-  sku_tier            = "Standard"
-  sku_size            = "Standard"
+
+  sku_size = "Standard"
+  sku_tier = "Standard"
 
   app_settings = {
 
   }
+
+  # Set toggle to true to evaluate credentials
+  basic_auth_enabled = true
+
+  basic_auth = {
+    password     = random_password.basic_auth_password.result
+    environments = "StagingEnvironments"
+  }
+
 }
 ```
 
@@ -70,9 +136,9 @@ module "staticsite" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.6.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.7.0, < 4.0.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.71.0)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0, < 4.0.0)
 
@@ -82,6 +148,8 @@ The following resources are used by this module:
 
 - [azurerm_resource_group.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
+- [random_password.basic_auth_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) (resource)
+- [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -106,6 +174,10 @@ Default: `true`
 
 The following outputs are exported:
 
+### <a name="output_name"></a> [name](#output\_name)
+
+Description: The name of the static site.
+
 ### <a name="output_resource"></a> [resource](#output\_resource)
 
 Description: The full output of the static site.
@@ -121,6 +193,12 @@ Description: The default hostname of the static web app.
 ## Modules
 
 The following Modules are called:
+
+### <a name="module_avm_res_keyvault_vault"></a> [avm\_res\_keyvault\_vault](#module\_avm\_res\_keyvault\_vault)
+
+Source: Azure/avm-res-keyvault-vault/azurerm
+
+Version: 0.9.1
 
 ### <a name="module_naming"></a> [naming](#module\_naming)
 

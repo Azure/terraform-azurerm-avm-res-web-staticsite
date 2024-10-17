@@ -2,10 +2,7 @@
 locals {
   azure_regions = [
     "westus2",
-    "centralus",
-    "eastus2",
-    "westeurope",
-    "eastasia"
+    "eastus2"
   ]
   azurerm_private_dns_zone_resource_name = "privatelink.${local.reformatted_subdomain}"
   default_host_name                      = module.staticsite.resource_uri

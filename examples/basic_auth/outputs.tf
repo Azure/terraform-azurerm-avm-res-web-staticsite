@@ -6,7 +6,7 @@ output "name" {
 output "resource" {
   description = "The full output of the static site."
   sensitive   = true
-  value       = module.staticsite.resource_id
+  value       = module.staticsite.resource
 }
 
 output "resource_id" {
