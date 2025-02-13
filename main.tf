@@ -18,11 +18,11 @@ resource "azurerm_static_web_app" "this" {
     }
   }
   dynamic "identity" {
-    for_each = local.managed_identities.system_assigned_user_assigned
+    for_each = local.managed_identity_type == null ? [] : ["identity"]
 
     content {
-      type         = identity.value.identity_type
-      identity_ids = identity.value.identity_resource_ids
+      type         = local.managed_identity_type
+      identity_ids = var.managed_identities.user_assigned_resource_ids
     }
   }
 }
