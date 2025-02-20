@@ -183,29 +183,11 @@ variable "managed_identities" {
     user_assigned_resource_ids = optional(set(string), [])
   })
   default     = {}
-  description = <<IDENTITY
-An object that sets the managed identity configuration for the virtual machine being deployed. Be aware that capabilities such as the Azure Monitor Agent and Role Assignments require that a managed identity has been configured.
-
-- `system_assigned`            = (Optional) Specifies whether the System Assigned Managed Identity should be enabled.  Defaults to false. 
-- `user_assigned_resource_ids` = (Optional) Specifies a set of User Assigned Managed Identity IDs to be assigned to this Virtual Machine.
-
-Example Inputs:
-```hcl
-#default system managed identity
-managed_identities = {
-  system_assigned = true
-}
-#user assigned managed identity only
-managed_identities           = {
-  user_assigned_resource_ids = ["<azure resource ID of a user assigned managed identity>"]
-}
-#user assigned and system assigned managed identities
-managed_identities  = {
-  system_assigned            = true
-  user_assigned_resource_ids = ["<azure resource ID of a user assigned managed identity>"]
-}
-```
-IDENTITY
+  description = <<DESCRIPTION
+  Controls the Managed Identity configuration on this resource. The following properties can be specified:
+  - `system_assigned` - (Optional) Specifies if the System Assigned Managed Identity should be enabled.
+  - `user_assigned_resource_ids` - (Optional) Specifies a list of User Assigned Managed Identity resource IDs to be assigned to this resource.
+  DESCRIPTION
   nullable    = false
 }
 
