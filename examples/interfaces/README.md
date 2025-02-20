@@ -24,6 +24,7 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
+  subscription_id = "d717cc8e-8af6-4764-bb9a-c86a529be857"
 }
 
 # This ensures we have unique CAF compliant names for our resources.
