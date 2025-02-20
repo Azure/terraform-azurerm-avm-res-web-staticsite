@@ -1,7 +1,7 @@
 resource "azurerm_static_web_app_custom_domain" "this" {
   for_each = var.custom_domains
 
-  domain_name       = coalesce(each.value.domain_name, "${each.value.cname_name}.${each.value.cname_zone_name}")
+  domain_name       = (each.value.validation_type == "cname-delegation" && each.value.cname_name != null && each.value.cname_name != "" && each.value.cname_zone_name != null && each.value.cname_zone_name != "") ? coalesce(each.value.domain_name, "${each.value.cname_name}.${each.value.cname_zone_name}") : each.value.domain_name
   static_web_app_id = azurerm_static_web_app.this.id
   validation_type   = each.value.validation_type
 
