@@ -21,8 +21,8 @@ resource "azurerm_static_web_app" "this" {
     for_each = local.managed_identities.system_assigned_user_assigned
 
     content {
-      type         = identity.value.identity_type
-      identity_ids = identity.value.identity_resource_ids
+      type         = identity.value.type
+      identity_ids = identity.value.user_assigned_resource_ids
     }
   }
 }
