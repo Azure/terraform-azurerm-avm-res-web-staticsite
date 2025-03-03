@@ -419,13 +419,17 @@ Default: `null`
 
 The following outputs are exported:
 
+### <a name="output_api_key"></a> [api\_key](#output\_api\_key)
+
+Description: The API key of this static web app.
+
 ### <a name="output_domains"></a> [domains](#output\_domains)
 
 Description: The domains of this static web app.
 
 ### <a name="output_name"></a> [name](#output\_name)
 
-Description: The name of the static site.
+Description: The name of the static web app.
 
 ### <a name="output_resource"></a> [resource](#output\_resource)
 
@@ -433,7 +437,7 @@ Description: This is the full output for the resource.
 
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
-Description: The ID of the static site.
+Description: The ID of the static web app.
 
 ### <a name="output_resource_private_endpoints"></a> [resource\_private\_endpoints](#output\_resource\_private\_endpoints)
 
