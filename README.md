@@ -341,6 +341,14 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_public_network_access_enabled"></a> [public\_network\_access\_enabled](#input\_public\_network\_access\_enabled)
+
+Description: Should public network access be enabled for the Static Web App. Defaults to `true`.
+
+Type: `bool`
+
+Default: `true`
+
 ### <a name="input_repository_url"></a> [repository\_url](#input\_repository\_url)
 
 Description: The repository URL of the static site.
