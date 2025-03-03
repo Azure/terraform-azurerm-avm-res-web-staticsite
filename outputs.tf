@@ -1,10 +1,15 @@
+output "api_key" {
+  description = "The API key of this static web app."
+  value       = azurerm_static_web_app.this.api_key
+}
+
 output "domains" {
   description = "The domains of this static web app."
   value       = local.domain_hostnames_urls
 }
 
 output "name" {
-  description = "The name of the static site."
+  description = "The name of the static web app."
   value       = azurerm_static_web_app.this.name
 }
 
@@ -15,7 +20,7 @@ output "resource" {
 }
 
 output "resource_id" {
-  description = "The ID of the static site."
+  description = "The ID of the static web app."
   sensitive   = true
   value       = azurerm_static_web_app.this.id
 }
