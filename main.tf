@@ -5,6 +5,7 @@ resource "azurerm_static_web_app" "this" {
   app_settings                       = var.app_settings
   configuration_file_changes_enabled = var.configuration_file_changes_enabled
   preview_environments_enabled       = var.preview_environments_enabled
+  public_network_access_enabled      = var.public_network_access_enabled
   sku_size                           = var.sku_size
   sku_tier                           = var.sku_tier
   tags                               = var.tags

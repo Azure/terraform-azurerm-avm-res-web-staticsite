@@ -268,6 +268,12 @@ variable "private_endpoints_manage_dns_zone_group" {
   nullable    = false
 }
 
+variable "public_network_access_enabled" {
+  type        = bool
+  default     = true
+  description = "Should public network access be enabled for the Static Web App. Defaults to `true`."
+}
+
 variable "repository_url" {
   type        = string
   default     = null
