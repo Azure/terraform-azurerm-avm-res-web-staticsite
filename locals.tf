@@ -1,5 +1,10 @@
 # TODO: insert locals here.
 locals {
+  custom_domains_hostnames_urls = [for domain in azurerm_static_web_app_custom_domain.this : "https://${domain.domain_name}"]
+  default_hostname_url = [
+    "https://${azurerm_static_web_app.this.default_host_name}"
+  ]
+  domain_hostnames_urls = concat(local.default_hostname_url, local.custom_domains_hostnames_urls)
   managed_identities = {
     system_assigned_user_assigned = (var.managed_identities.system_assigned || length(var.managed_identities.user_assigned_resource_ids) > 0) ? {
       this = {
