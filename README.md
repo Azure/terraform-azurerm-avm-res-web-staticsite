@@ -411,6 +411,10 @@ Default: `null`
 
 The following outputs are exported:
 
+### <a name="output_domains"></a> [domains](#output\_domains)
+
+Description: The domains of this static web app.
+
 ### <a name="output_name"></a> [name](#output\_name)
 
 Description: The name of the static site.
