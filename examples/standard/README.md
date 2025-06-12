@@ -48,20 +48,15 @@ resource "azurerm_resource_group" "example" {
 module "staticsite" {
   source = "../../"
 
-  # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.6.0"
-
-  enable_telemetry = var.enable_telemetry
-
+  location            = azurerm_resource_group.example.location
   name                = "${module.naming.static_web_app.name_unique}-standard"
   resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  sku_tier            = "Standard"
-  sku_size            = "Standard"
-
   app_settings = {
 
   }
+  enable_telemetry = var.enable_telemetry
+  sku_size         = "Standard"
+  sku_tier         = "Standard"
 }
 ```
 

@@ -57,77 +57,62 @@ resource "random_password" "basic_auth_password" {
 }
 
 module "avm_res_keyvault_vault" {
-  source                      = "Azure/avm-res-keyvault-vault/azurerm"
-  version                     = "0.9.1"
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  source  = "Azure/avm-res-keyvault-vault/azurerm"
+  version = "0.9.1"
+
+  location                    = azurerm_resource_group.example.location
   name                        = module.naming.key_vault.name_unique
   resource_group_name         = azurerm_resource_group.example.name
-  location                    = azurerm_resource_group.example.location
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
   enabled_for_disk_encryption = true
   network_acls = {
     default_action = "Allow"
     bypass         = "AzureServices"
   }
-
   role_assignments = {
     deployment_user_secrets = { #give the deployment user access to secrets
       role_definition_id_or_name = "Key Vault Secrets Officer"
       principal_id               = data.azurerm_client_config.current.object_id
     }
   }
-
-  wait_for_rbac_before_key_operations = {
-    create = "60s"
-  }
-
-  wait_for_rbac_before_secret_operations = {
-    create = "60s"
-  }
-
   secrets = {
     basic_auth_password = {
       name = "basic-auth-password"
     }
   }
-
   secrets_value = {
     basic_auth_password = random_password.basic_auth_password.result
   }
-
   tags = {
 
   }
-
+  wait_for_rbac_before_key_operations = {
+    create = "60s"
+  }
+  wait_for_rbac_before_secret_operations = {
+    create = "60s"
+  }
 }
 
 # This is the module call
 module "staticsite" {
   source = "../../"
 
-  # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.6.0"
-
-  enable_telemetry = var.enable_telemetry
-
+  location            = azurerm_resource_group.example.location
   name                = "${module.naming.static_web_app.name_unique}-basic-auth"
   resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-
-  sku_size = "Standard"
-  sku_tier = "Standard"
-
   app_settings = {
 
   }
-
-  # Set toggle to true to evaluate credentials
-  basic_auth_enabled = true
-
   basic_auth = {
     password     = random_password.basic_auth_password.result
     environments = "StagingEnvironments"
   }
-
+  # Set toggle to true to evaluate credentials
+  basic_auth_enabled = true
+  enable_telemetry   = var.enable_telemetry
+  sku_size           = "Standard"
+  sku_tier           = "Standard"
 }
 ```
 

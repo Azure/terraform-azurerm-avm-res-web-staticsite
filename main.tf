@@ -38,14 +38,14 @@ resource "azurerm_static_web_app" "this" {
 resource "azapi_update_resource" "this" {
   count = var.repository_url != null ? 1 : 0
 
-  type = "Microsoft.Web/staticSites@2022-03-01"
+  resource_id = azurerm_static_web_app.this.id
+  type        = "Microsoft.Web/staticSites@2022-03-01"
   body = {
     properties = {
       repositoryUrl = var.repository_url
       branch        = coalesce(var.branch, "main")
     }
   }
-  resource_id = azurerm_static_web_app.this.id
 
   depends_on = [
     azurerm_static_web_app.this
