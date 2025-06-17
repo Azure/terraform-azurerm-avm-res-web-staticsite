@@ -34,8 +34,8 @@ variable "app_settings" {
 
   }
   description = <<DESCRIPTION
-  A map of app settings to assign to the static site. 
-  
+  A map of app settings to assign to the static site.
+
   ```terraform
   app_settings = {
     WEBSITE_NODE_DEFAULT_VERSION = "10.14.1"
@@ -119,7 +119,7 @@ variable "custom_domains" {
 
   }
   description = <<DESCRIPTION
-  A map of custom domains to assign to the static site. 
+  A map of custom domains to assign to the static site.
 
   - `resource_group_name` - (Optional) The name of the resource group where the custom domain is located. If not set, the resource group of the static site will be used.
   - `domain_name` - (Optional) The domain name of the custom domain. If not set, the domain name will be generated from the `cname_name` and `cname_zone_name`.

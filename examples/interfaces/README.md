@@ -86,17 +86,13 @@ resource "azurerm_user_assigned_identity" "user" {
 module "staticsite" {
   source = "../../"
 
-  # source             = "Azure/avm-res-web-staticsite/azurerm"
-  # version = "0.6.0"
-
-  enable_telemetry = var.enable_telemetry
-
+  location            = azurerm_resource_group.example.location
   name                = "${module.naming.static_web_app.name_unique}-interfaces"
   resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  sku_size            = "Standard"
-  sku_tier            = "Standard"
+  app_settings = {
 
+  }
+  enable_telemetry = var.enable_telemetry
   managed_identities = {
     # Identities can only be used with the Standard SKU
 
@@ -121,22 +117,6 @@ module "staticsite" {
     }
     */
   }
-
-  app_settings = {
-
-  }
-
-  # lock = {
-
-  #   /*
-  #   kind = "ReadOnly"
-  #   */
-
-  #   /*
-  #   kind = "CanNotDelete"
-  #   */
-  # }
-
   private_endpoints = {
     # Use of private endpoints requires Standard SKU
     primary = {
@@ -169,14 +149,8 @@ module "staticsite" {
     }
 
   }
-
-  # role_assignments = {
-  #   role_assignment_1 = {
-  #     role_definition_id_or_name = data.azurerm_role_definition.example.id
-  #     principal_id               = data.azurerm_client_config.this.object_id
-  #   }
-  # }
-
+  sku_size = "Standard"
+  sku_tier = "Standard"
   tags = {
     environment = "dev-tf"
   }
