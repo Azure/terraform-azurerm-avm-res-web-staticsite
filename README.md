@@ -48,7 +48,7 @@ The following input variables are required:
 
 ### <a name="input_location"></a> [location](#input\_location)
 
-Description: Azure region where the resource should be  deployed.
+Description: Azure region where the resource should be deployed.
 
 Type: `string`
 
