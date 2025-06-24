@@ -6,6 +6,7 @@ This deploys the module as a Static Web App that can use a custom domain.
 ```hcl
 terraform {
   required_version = ">= 1.7.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"

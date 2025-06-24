@@ -1,5 +1,6 @@
 terraform {
   required_version = ">= 1.7.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -45,10 +46,10 @@ resource "azurerm_resource_group" "example" {
 }
 
 resource "azurerm_virtual_network" "example" {
-  address_space       = ["192.168.0.0/24"]
   location            = azurerm_resource_group.example.location
   name                = module.naming.virtual_network.name_unique
   resource_group_name = azurerm_resource_group.example.name
+  address_space       = ["192.168.0.0/24"]
 }
 
 resource "azurerm_subnet" "example" {
@@ -89,27 +90,8 @@ module "staticsite" {
   enable_telemetry = var.enable_telemetry
   managed_identities = {
     # Identities can only be used with the Standard SKU
-
-    /*
-    system = {
-      identity_type = "SystemAssigned"
-      identity_ids = [ azurerm_user_assigned_identity.system.id ]
-    }
-    */
-
-    user = {
-      identity_type = "UserAssigned"
-      identity_ids  = [azurerm_user_assigned_identity.user.id]
-    }
-
-    /*
-    system_and_user = {
-      identity_type = "SystemAssigned, UserAssigned"
-      identity_resource_ids = [
-        azurerm_user_assigned_identity.user.id
-      ]
-    }
-    */
+    system_assigned            = true
+    user_assigned_resource_ids = [azurerm_user_assigned_identity.user.id]
   }
   private_endpoints = {
     # Use of private endpoints requires Standard SKU

@@ -6,6 +6,7 @@ This deploys the module as a Standard SKU Static Web App that leverages basic au
 ```hcl
 terraform {
   required_version = ">= 1.9.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
