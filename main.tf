@@ -18,6 +18,7 @@ resource "azurerm_static_web_app" "this" {
       password     = var.basic_auth.password
     }
   }
+
   dynamic "identity" {
     for_each = local.managed_identities.system_assigned_user_assigned
 
