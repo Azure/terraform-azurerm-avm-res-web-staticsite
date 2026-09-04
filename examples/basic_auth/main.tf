@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+      version = "~> 5.2"
     }
     random = {
       source  = "hashicorp/random"
@@ -24,7 +24,7 @@ provider "azurerm" {
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
-  version = "0.4.0"
+  version = "0.4.3"
 }
 
 # Helps pick a random region from the list of regions.
@@ -53,7 +53,7 @@ resource "random_password" "basic_auth_password" {
 
 module "avm_res_keyvault_vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.9.1"
+  version = "0.11.0"
 
   location                    = azurerm_resource_group.example.location
   name                        = module.naming.key_vault.name_unique
