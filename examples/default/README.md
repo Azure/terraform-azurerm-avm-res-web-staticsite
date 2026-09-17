@@ -56,7 +56,7 @@ module "staticsite" {
   app_settings = {
 
   }
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry = false
 }
 ```
 

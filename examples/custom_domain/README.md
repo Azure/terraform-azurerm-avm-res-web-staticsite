@@ -66,7 +66,7 @@ module "staticsite" {
     }
     */
   }
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry = false
 }
 ```
 
