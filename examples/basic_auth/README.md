@@ -66,7 +66,7 @@ module "avm_res_keyvault_vault" {
   name                        = module.naming.key_vault.name_unique
   resource_group_name         = azurerm_resource_group.example.name
   tenant_id                   = data.azurerm_client_config.current.tenant_id
-  enable_telemetry            = false
+  enable_telemetry            = var.enable_telemetry
   enabled_for_disk_encryption = true
   network_acls = {
     default_action = "Allow"
@@ -113,7 +113,7 @@ module "staticsite" {
   }
   # Set toggle to true to evaluate credentials
   basic_auth_enabled = true
-  enable_telemetry   = false
+  enable_telemetry   = var.enable_telemetry
   sku_size           = "Standard"
   sku_tier           = "Standard"
 }
@@ -156,7 +156,7 @@ If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
-Default: `true`
+Default: `false`
 
 ## Outputs
 
