@@ -87,7 +87,7 @@ module "staticsite" {
   app_settings = {
 
   }
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
   managed_identities = {
     # Identities can only be used with the Standard SKU
     system_assigned            = true

@@ -49,7 +49,7 @@ module "staticsite" {
   app_settings = {
 
   }
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
   sku_size         = "Standard"
   sku_tier         = "Standard"
 }
