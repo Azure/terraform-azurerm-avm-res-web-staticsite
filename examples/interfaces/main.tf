@@ -145,92 +145,88 @@ module "staticsite" {
 # }
 
 
-/*
-
 # VM to test private endpoint connectivity
 
-module "regions" {
-  source  = "Azure/regions/azurerm"
-  version = ">= 0.4.0"
-}
+# module "regions" {
+#   source  = "Azure/regions/azurerm"
+#   version = ">= 0.4.0"
+# }
 
-resource "random_integer" "zone_index" {
-  max = length(module.regions.regions_by_name[local.azure_regions[random_integer.region_index.result]].zones)
-  min = 1
-}
+# resource "random_integer" "zone_index" {
+#   max = length(module.regions.regions_by_name[local.azure_regions[random_integer.region_index.result]].zones)
+#   min = 1
+# }
 
-resource "azurerm_network_security_group" "example" {
-  location            = azurerm_resource_group.example.location
-  name                = module.naming.network_security_group.name_unique
-  resource_group_name = azurerm_resource_group.example.name
-}
+# resource "azurerm_network_security_group" "example" {
+#   location            = azurerm_resource_group.example.location
+#   name                = module.naming.network_security_group.name_unique
+#   resource_group_name = azurerm_resource_group.example.name
+# }
 
-resource "azurerm_network_security_rule" "example" {
-  access                      = "Allow"
-  direction                   = "Inbound"
-  name                        = "AllowAllRDPInbound"
-  network_security_group_name = azurerm_network_security_group.example.name
-  priority                    = 100
-  protocol                    = "Tcp"
-  resource_group_name         = azurerm_resource_group.example.name
-  destination_address_prefix  = "*"
-  destination_port_range      = "3389"
-  source_address_prefix       = "*"
-  source_port_range           = "*"
-}
+# resource "azurerm_network_security_rule" "example" {
+#   access                      = "Allow"
+#   direction                   = "Inbound"
+#   name                        = "AllowAllRDPInbound"
+#   network_security_group_name = azurerm_network_security_group.example.name
+#   priority                    = 100
+#   protocol                    = "Tcp"
+#   resource_group_name         = azurerm_resource_group.example.name
+#   destination_address_prefix  = "*"
+#   destination_port_range      = "3389"
+#   source_address_prefix       = "*"
+#   source_port_range           = "*"
+# }
 
 # Create the virtual machine
-module "avm_res_compute_virtualmachine" {
-  source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-  version = "0.16.0"
+# module "avm_res_compute_virtualmachine" {
+#   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
+#   version = "0.16.0"
 
-  enable_telemetry = var.enable_telemetry
+#   enable_telemetry = var.enable_telemetry
 
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  name                = "${module.naming.virtual_machine.name_unique}-tf"
-  sku_size            = module.avm_res_compute_virtualmachine_sku_selector.sku
-  os_type             = "Windows"
+#   resource_group_name = azurerm_resource_group.example.name
+#   location            = azurerm_resource_group.example.location
+#   name                = "${module.naming.virtual_machine.name_unique}-tf"
+#   sku_size            = module.avm_res_compute_virtualmachine_sku_selector.sku
+#   os_type             = "Windows"
 
-  zone = random_integer.zone_index.result
+#   zone = random_integer.zone_index.result
 
-  generate_admin_password_or_ssh_key = false
-  admin_username                     = "TestAdmin"
-  admin_password                     = "P@ssw0rd1234!"
+#   generate_admin_password_or_ssh_key = false
+#   admin_username                     = "TestAdmin"
+#   admin_password                     = "P@ssw0rd1234!"
 
-  source_image_reference = {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2019-Datacenter"
-    version   = "latest"
-  }
+#   source_image_reference = {
+#     publisher = "MicrosoftWindowsServer"
+#     offer     = "WindowsServer"
+#     sku       = "2019-Datacenter"
+#     version   = "latest"
+#   }
 
-  network_interfaces = {
-    network_interface_1 = {
-      name = "nic-${module.naming.network_interface.name_unique}-tf"
-      ip_configurations = {
-        ip_configuration_1 = {
-          name                          = "${module.naming.network_interface.name_unique}-ipconfig1-public"
-          private_ip_subnet_resource_id = azurerm_subnet.example.id
-          create_public_ip_address      = true
-          public_ip_address_name        = "pip-${module.naming.virtual_machine.name_unique}-tf"
-          is_primary_ipconfiguration    = true
-        }
-      }
-    }
-  }
+#   network_interfaces = {
+#     network_interface_1 = {
+#       name = "nic-${module.naming.network_interface.name_unique}-tf"
+#       ip_configurations = {
+#         ip_configuration_1 = {
+#           name                          = "${module.naming.network_interface.name_unique}-ipconfig1-public"
+#           private_ip_subnet_resource_id = azurerm_subnet.example.id
+#           create_public_ip_address      = true
+#           public_ip_address_name        = "pip-${module.naming.virtual_machine.name_unique}-tf"
+#           is_primary_ipconfiguration    = true
+#         }
+#       }
+#     }
+#   }
 
-  tags = {
+#   tags = {
 
-  }
+#   }
 
-}
+# }
 
-module "avm_res_compute_virtualmachine_sku_selector" {
-  source  = "Azure/avm-res-compute-virtualmachine/azurerm//modules/sku_selector"
-  version = "0.16.0"
+# module "avm_res_compute_virtualmachine_sku_selector" {
+#   source  = "Azure/avm-res-compute-virtualmachine/azurerm//modules/sku_selector"
+#   version = "0.16.0"
 
-  deployment_region = azurerm_resource_group.example.location
-}
-
-*/
+#   deployment_region = azurerm_resource_group.example.location
+# }

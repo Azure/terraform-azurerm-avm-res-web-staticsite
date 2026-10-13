@@ -22,6 +22,15 @@ locals {
       }
     ]
   ]) : "${ra.private_endpoint_key}-${ra.ra_key}" => ra }
+  private_endpoints = merge(azurerm_private_endpoint.this, azurerm_private_endpoint.this_unmanaged_dns_zone_groups)
+  private_endpoint_locks = {
+    for key, endpoint in var.private_endpoints : key => {
+      kind  = endpoint.lock != null ? endpoint.lock.kind : var.lock.kind
+      name  = coalesce(try(endpoint.lock.name, null), endpoint.name != null ? "lock-${endpoint.name}" : "lock-pe-${var.name}")
+      notes = try(endpoint.lock.notes, null)
+    }
+    if endpoint.lock != null || ((var.all_child_resources_inherit_lock || var.private_endpoints_inherit_lock) && var.lock != null)
+  }
   # Private endpoint application security group associations
   private_endpoint_application_security_group_associations = { for assoc in flatten([
     for pe_k, pe_v in var.private_endpoints : [
