@@ -9,20 +9,27 @@ resource "azurerm_management_lock" "this" {
   depends_on = [
     azurerm_static_web_app.this,
     azurerm_private_endpoint.this,
-    azurerm_role_assignment.this
+    azurerm_private_endpoint.this_unmanaged_dns_zone_groups,
+    azurerm_role_assignment.this,
+    azurerm_role_assignment.pe,
+    azurerm_private_endpoint_application_security_group_association.this
   ]
 }
 
 resource "azurerm_management_lock" "pe" {
-  for_each = { for private_endpoint, pe_values in var.private_endpoints : private_endpoint => pe_values if(((var.all_child_resources_inherit_lock || var.private_endpoints_inherit_lock) && var.lock != null) || (pe_values.lock != null)) }
+  for_each = local.private_endpoint_locks
 
-  lock_level = (var.all_child_resources_inherit_lock || var.private_endpoints_inherit_lock) ? var.lock.kind : each.value.lock.kind
-  name       = each.value.lock != null ? each.value.lock.name : (each.value.name != null ? "lock-${each.value.name}" : "lock-pe-${var.name}")
-  scope      = azurerm_private_endpoint.this[each.key].id
+  lock_level = each.value.kind
+  name       = each.value.name
+  scope      = local.private_endpoints[each.key].id
+  notes      = each.value.notes
 
   depends_on = [
     azurerm_static_web_app.this,
     azurerm_private_endpoint.this,
-    azurerm_role_assignment.this
+    azurerm_private_endpoint.this_unmanaged_dns_zone_groups,
+    azurerm_role_assignment.this,
+    azurerm_role_assignment.pe,
+    azurerm_private_endpoint_application_security_group_association.this
   ]
 }

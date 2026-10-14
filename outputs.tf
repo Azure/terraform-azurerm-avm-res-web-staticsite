@@ -1,5 +1,6 @@
 output "api_key" {
   description = "The API key of this static web app."
+  sensitive   = true
   value       = azurerm_static_web_app.this.api_key
 }
 
@@ -27,7 +28,7 @@ output "resource_id" {
 
 output "resource_private_endpoints" {
   description = "A map of private endpoints. The map key is the supplied input to var.private_endpoints. The map value is the entire azurerm_private_endpoint resource."
-  value       = azurerm_private_endpoint.this
+  value       = local.private_endpoints
 }
 
 output "resource_uri" {

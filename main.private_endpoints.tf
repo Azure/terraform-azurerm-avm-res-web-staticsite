@@ -12,7 +12,7 @@ resource "azurerm_private_endpoint" "this" {
     is_manual_connection           = false
     name                           = each.value.private_service_connection_name != null ? each.value.private_service_connection_name : "pse-${var.name}"
     private_connection_resource_id = azurerm_static_web_app.this.id
-    subresource_names              = ["staticSites"]
+    subresource_names              = [coalesce(each.value.subresource_name, "staticSites")]
   }
 
   dynamic "ip_configuration" {
@@ -21,8 +21,8 @@ resource "azurerm_private_endpoint" "this" {
     content {
       name               = ip_configuration.value.name
       private_ip_address = ip_configuration.value.private_ip_address
-      member_name        = "staticSites"
-      subresource_name   = "staticSites"
+      member_name        = coalesce(ip_configuration.value.member_name, "staticSites")
+      subresource_name   = coalesce(each.value.subresource_name, "staticSites")
     }
   }
 
@@ -50,7 +50,7 @@ resource "azurerm_private_endpoint" "this_unmanaged_dns_zone_groups" {
     is_manual_connection           = false
     name                           = each.value.private_service_connection_name != null ? each.value.private_service_connection_name : "pse-${var.name}"
     private_connection_resource_id = azurerm_static_web_app.this.id
-    subresource_names              = ["staticSites"]
+    subresource_names              = [coalesce(each.value.subresource_name, "staticSites")]
   }
 
   dynamic "ip_configuration" {
@@ -59,8 +59,8 @@ resource "azurerm_private_endpoint" "this_unmanaged_dns_zone_groups" {
     content {
       name               = ip_configuration.value.name
       private_ip_address = ip_configuration.value.private_ip_address
-      member_name        = "staticSites"
-      subresource_name   = "staticSites"
+      member_name        = coalesce(ip_configuration.value.member_name, "staticSites")
+      subresource_name   = coalesce(each.value.subresource_name, "staticSites")
     }
   }
 
@@ -73,5 +73,5 @@ resource "azurerm_private_endpoint_application_security_group_association" "this
   for_each = local.private_endpoint_application_security_group_associations
 
   application_security_group_id = each.value.asg_resource_id
-  private_endpoint_id           = azurerm_private_endpoint.this[each.value.pe_key].id
+  private_endpoint_id           = local.private_endpoints[each.value.pe_key].id
 }
