@@ -1,5 +1,10 @@
 mock_provider "azapi" {
   alias = "mocked"
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
 }
 
 mock_provider "azurerm" {
@@ -20,14 +25,6 @@ mock_provider "azurerm" {
   }
 }
 
-mock_provider "modtm" {
-  alias = "mocked"
-}
-
-mock_provider "random" {
-  alias = "mocked"
-}
-
 variables {
   name                = "site"
   location            = "eastus2"
@@ -43,8 +40,8 @@ run "defaults_preserve_endpoint_names_and_static_sites" {
   providers = {
     azapi   = azapi.mocked
     azurerm = azurerm.mocked
-    modtm   = modtm.mocked
-    random  = random.mocked
+
+
   }
 
   variables {
@@ -83,8 +80,8 @@ run "managed_dns_honors_supported_settings" {
   providers = {
     azapi   = azapi.mocked
     azurerm = azurerm.mocked
-    modtm   = modtm.mocked
-    random  = random.mocked
+
+
   }
 
   variables {
@@ -163,8 +160,8 @@ run "unmanaged_dns_honors_settings_without_a_parent_lock" {
   providers = {
     azapi   = azapi.mocked
     azurerm = azurerm.mocked
-    modtm   = modtm.mocked
-    random  = random.mocked
+
+
   }
 
   variables {
@@ -227,8 +224,8 @@ run "parent_lock_inheritance_preserves_names" {
   providers = {
     azapi   = azapi.mocked
     azurerm = azurerm.mocked
-    modtm   = modtm.mocked
-    random  = random.mocked
+
+
   }
 
   variables {
@@ -255,8 +252,8 @@ run "lock_inheritance_can_be_disabled" {
   providers = {
     azapi   = azapi.mocked
     azurerm = azurerm.mocked
-    modtm   = modtm.mocked
-    random  = random.mocked
+
+
   }
 
   variables {
@@ -284,8 +281,8 @@ run "invalid_subnet_is_rejected" {
   providers = {
     azapi   = azapi.mocked
     azurerm = azurerm.mocked
-    modtm   = modtm.mocked
-    random  = random.mocked
+
+
   }
 
   variables {
