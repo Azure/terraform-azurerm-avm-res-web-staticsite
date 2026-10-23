@@ -102,7 +102,7 @@ variable "custom_domains" {
     resource_group_name = optional(string)
     domain_name         = optional(string)
     ttl                 = optional(number, 300)
-    validation_type     = optional(string, "cname-delegation")
+    validation_type     = optional(string)
 
     create_cname_records     = optional(bool, false)
     cname_name               = optional(string)
@@ -124,7 +124,7 @@ variable "custom_domains" {
   - `resource_group_name` - (Optional) The name of the resource group where the custom domain is located. If not set, the resource group of the static site will be used.
   - `domain_name` - (Optional) The domain name of the custom domain. If not set, the domain name will be generated from the `cname_name` and `cname_zone_name`.
   - `ttl` - (Optional) The TTL of the custom domain. Defaults to 300.
-  - `validation_type` - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`. Defaults to `cname-delegation`.
+  - `validation_type` - (Optional) The type of validation to use for the custom domain. Possible values are `cname-delegation` and `dns-txt-token`. Leave unset to let Azure decide (e.g. when importing an existing domain, to avoid forced replacement). Treated as `cname-delegation` when generating `domain_name`.
   - `create_cname_records` - (Optional) If set to true, CNAME records will be created for the custom domain. Defaults to false.
   - `create_txt_records` - (Optional) If set to true, TXT records will be created for the custom domain. Defaults to false.
   - `cname_name` - (Optional) The name of the CNAME record to create for the custom domain.
