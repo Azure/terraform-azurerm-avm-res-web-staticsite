@@ -29,7 +29,7 @@ provider "azurerm" {
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/avm-utl-naming/azure"
-  version = "0.2.0"
+  version = "0.3.0"
 }
 
 # Helps pick a random region from the list of regions.
@@ -58,7 +58,7 @@ resource "random_password" "basic_auth_password" {
 
 module "avm_res_keyvault_vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.9.1"
+  version = "0.12.0"
 
   location                    = azurerm_resource_group.example.location
   name                        = module.naming.key_vault.name_unique
