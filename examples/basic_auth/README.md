@@ -6,17 +6,12 @@ This deploys the module as a Standard SKU Static Web App that leverages basic au
 
 ```hcl
 terraform {
-  required_version = ">= 1.9.0"
+  required_version = ">= 1.12.0"
 
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
-    }
-    # tflint-ignore: terraform_unused_required_providers
-    modtm = {
-      source  = "registry.terraform.io/azure/modtm"
-      version = "~> 0.3"
     }
     random = {
       source  = "hashicorp/random"
@@ -65,11 +60,11 @@ resource "random_password" "basic_auth_password" {
 
 module "avm_res_keyvault_vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.9.1"
+  version = "0.13.1"
 
   location                    = azurerm_resource_group.example.location
   name                        = module.naming.key_vault.name_unique
-  resource_group_name         = azurerm_resource_group.example.name
+  parent_id                   = azurerm_resource_group.example.id
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   enable_telemetry            = var.enable_telemetry
   enabled_for_disk_encryption = true
@@ -129,11 +124,9 @@ module "staticsite" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9.0)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.12.0)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
-
-- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.5.0, < 4.0.0)
 
@@ -193,7 +186,7 @@ The following Modules are called:
 
 Source: Azure/avm-res-keyvault-vault/azurerm
 
-Version: 0.9.1
+Version: 0.13.1
 
 ### <a name="module_naming"></a> [naming](#module\_naming)
 
