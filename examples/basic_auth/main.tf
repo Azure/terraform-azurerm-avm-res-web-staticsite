@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.9.0"
+  required_version = ">= 1.12.0"
 
   required_providers {
     azurerm = {
@@ -23,8 +23,8 @@ provider "azurerm" {
 
 # This ensures we have unique CAF compliant names for our resources.
 module "naming" {
-  source  = "Azure/naming/azurerm"
-  version = "0.4.0"
+  source  = "Azure/avm-utl-naming/azure"
+  version = "0.2.0"
 }
 
 # Helps pick a random region from the list of regions.
@@ -53,11 +53,11 @@ resource "random_password" "basic_auth_password" {
 
 module "avm_res_keyvault_vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.9.1"
+  version = "0.13.1"
 
   location                    = azurerm_resource_group.example.location
   name                        = module.naming.key_vault.name_unique
-  resource_group_name         = azurerm_resource_group.example.name
+  parent_id                   = azurerm_resource_group.example.id
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   enable_telemetry            = var.enable_telemetry
   enabled_for_disk_encryption = true
